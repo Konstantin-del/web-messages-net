@@ -2,8 +2,7 @@
 {
     public class CreateContactRequest
     {
-        public Guid UserId { get; set; }
-
+        public Guid IdRecipient { get; set; }
         public string Name { get; set; }
     }
 }

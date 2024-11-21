@@ -8,6 +8,8 @@
 
         public string Nick { get; set; }
 
-        public string Token { get; set; }
+        public string? Token { get; set; }
+
+        public List<GetContactsUserResponse>? Contacts { get; set; }
     }
 }

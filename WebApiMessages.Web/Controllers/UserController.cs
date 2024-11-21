@@ -10,37 +10,46 @@ namespace Messages.Web.Controllers;
 [ApiController]
 [Route("api/users")]
 public class UserController : Controller
-{
-    [HttpPost]
-    public ActionResult <UserResponse> Create(RegistrationUserRequest modelRegister)
-    {
-        try
-        {
+{ 
+    private UserService? _userService { get; set; }
+    private JWT? _jwt { get; set; }
 
-            UserResponse user = new();
-            user.Token = JWT.getToken();
+    [HttpPost]
+    public ActionResult <UserResponse> Create([FromBody] RegistrationUserRequest modelRegister)
+    {
+        if (modelRegister is null)
+        {
+            return BadRequest("Invalid client request");
+        }
+
+        _userService = new();
+        var user = _userService.CreateUser(modelRegister);
+
+        if (user != null)
+        {
+            _jwt = new();
+            user.Token = _jwt.getToken();
             return Ok(user);
         }
-        catch
-        {
-            return View();
-        }
+
+        return StatusCode(500);
     }
 
     [HttpPost("auth")] 
-    public ActionResult<UserResponse> Auth(AuthUserRequest authData)
+    public ActionResult<UserResponse> Auth([FromBody] AuthUserRequest authData)
     {
         if (authData is null)
         {
             return BadRequest("Invalid client request");
         }
 
-        UserService userService = new();
-        var user = userService.GetUser(authData);
+        _userService = new();
+        var user = _userService.UserAuth(authData);
 
         if (user != null)
         {
-            user.Token = JWT.getToken();
+            _jwt = new();
+            user.Token = _jwt.getToken();
             return Ok( user );
         }
 
