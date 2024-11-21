@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 
 
-namespace Messages.Core.Models.Requests.Validators
+namespace Messages.Web.Models.Requests.Validators
 {
     public class MessageRequestValidator : AbstractValidator<MessageRequest>
     {

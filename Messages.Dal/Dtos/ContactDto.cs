@@ -1,5 +1,5 @@
 ﻿
-namespace Messages.Core.Dtos
+namespace Messages.Dal.Dtos
 {
     public class ContactDto
     {

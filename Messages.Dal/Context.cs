@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Messages.Core.Dtos;
+using Messages.Dal.Dtos;
 
 namespace Messages.Dal
 {

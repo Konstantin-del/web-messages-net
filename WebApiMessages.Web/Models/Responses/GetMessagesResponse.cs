@@ -1,6 +1,6 @@
-﻿using Messages.Core.Models.Requests;
+﻿using Messages.Web.Models.Requests;
 
-namespace Messages.Core.Models.Responses
+namespace Messages.Web.Models.Responses
 {
     public class GetMessagesResponse
     {

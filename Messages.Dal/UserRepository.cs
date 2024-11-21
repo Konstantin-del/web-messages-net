@@ -1,6 +1,4 @@
-﻿using Messages.Core.Dtos;
-using Messages.Core.Models.Requests;
-using Messages.Core.Models.Responses;
+﻿using Messages.Dal.Dtos;
 
 namespace Messages.Dal
 {

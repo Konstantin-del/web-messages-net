@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Messages.Core.Models.Requests;
-using Messages.Core.Models.Responses;
 using Messages.Bll;
+using Messages.Bll.ModelsBll;
+using Messages.Web.Models.Requests;
+using Messages.Web.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
+using AutoMapper;
+using Messages.Web.Mappings;
+using Messages.Dal;
+using Messages.Dal.Dtos;
 
 
 namespace Messages.Web.Controllers;
@@ -10,10 +15,22 @@ namespace Messages.Web.Controllers;
 [ApiController]
 [Route("api/users")]
 public class UserController : Controller
-{ 
-    private UserService? _userService { get; set; }
-    private JWT? _jwt { get; set; }
+{
+    UserService? _userService;
+    JWT? _jwt;
+    Mapper _mapper;
+    public UserController()
+    {
+        _userService = new();
 
+        var config = new MapperConfiguration(
+        cfg =>
+        {
+            cfg.AddProfile(new UserMapperProfile());
+        });
+        _mapper = new Mapper(config);
+    }
+    
     [HttpPost]
     public ActionResult <UserResponse> Create([FromBody] RegistrationUserRequest modelRegister)
     {
@@ -21,17 +38,17 @@ public class UserController : Controller
         {
             return BadRequest("Invalid client request");
         }
-
+        var result = _mapper.Map<RegisterBll>(modelRegister);
         _userService = new();
-        var user = _userService.CreateUser(modelRegister);
-
+        var user = _userService.CreateUser(result);
+        
         if (user != null)
         {
+            var newUser = _mapper.Map<UserResponse>(user);
             _jwt = new();
-            user.Token = _jwt.getToken();
-            return Ok(user);
+            newUser.Token = _jwt.getToken();
+            return Ok(newUser);
         }
-
         return StatusCode(500);
     }
 
@@ -42,32 +59,20 @@ public class UserController : Controller
         {
             return BadRequest("Invalid client request");
         }
-
+        var result = _mapper.Map<AuthBll>(authData);
         _userService = new();
-        var user = _userService.UserAuth(authData);
+        var user = _userService.UserAuth(result);
 
         if (user != null)
         {
+            var verifiedUser = _mapper.Map<UserResponse>(user);
             _jwt = new();
-            user.Token = _jwt.getToken();
-            return Ok( user );
+            verifiedUser.Token = _jwt.getToken();
+            return Ok(verifiedUser);
         }
 
         return Unauthorized();
     }
-
-    //[HttpGet, Authorize]
-    //public ActionResult<UserDataResponse> GetUser([FromBody] string Nick)
-    //{
-    //    try
-    //    {
-    //        return Ok();
-    //    }
-    //    catch
-    //    {
-    //        return View();
-    //    }
-    //}
 
     [HttpPut("{id}"), Authorize]    
     public ActionResult Edit([FromRoute] Guid id, [FromBody] UpdateUserRequest modelUpdate)

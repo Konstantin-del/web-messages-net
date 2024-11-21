@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Messages.Core.Models.Requests.Validators
+namespace Messages.Web.Models.Requests.Validators
 {
     public class AuthUserRequestValidator : AbstractValidator<AuthUserRequest>
     {

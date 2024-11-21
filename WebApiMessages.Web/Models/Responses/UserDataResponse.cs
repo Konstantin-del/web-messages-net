@@ -1,4 +1,4 @@
-﻿namespace Messages.Core.Models.Responses
+﻿namespace Messages.Web.Models.Responses
 {
     public class UserDataResponse
     {

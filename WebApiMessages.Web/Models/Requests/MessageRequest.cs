@@ -1,4 +1,4 @@
-﻿namespace Messages.Core.Models.Requests
+﻿namespace Messages.Web.Models.Requests
 {
     public class MessageRequest
     {

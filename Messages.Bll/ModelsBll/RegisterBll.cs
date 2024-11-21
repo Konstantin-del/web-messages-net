@@ -1,14 +1,11 @@
 ﻿
-namespace Messages.Core.Dtos
+namespace Messages.Bll.ModelsBll
 {
-    public class UserDto
+    public class RegisterBll
     {
-        public Guid Id { get; set; }
         public string Name { get; set; }
         public string Nick { get; set; }
         public string Password { get; set; }
-        public byte[] Salt { get; set; }
         public DateTime RegistrationDate { get; set; }
-        public List<ContactDto> Contacts { get; set; }
     }
 }

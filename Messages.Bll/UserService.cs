@@ -1,54 +1,58 @@
-﻿using Messages.Core.Models.Requests;
-using Messages.Core.Models.Responses;
-using Messages.Core.Dtos;
+﻿using AutoMapper;
+using Messages.Bll.Mappings;
+using Messages.Bll.ModelsBll;
+using Messages.Dal.Dtos;
 using Messages.Dal;
 
 namespace Messages.Bll
 {
     public class UserService
     {
-        private UserRepository? _userRepository { get; set; }
-        private PasswordHelper? _passvordHelper { get; set; }
+        private UserRepository? _userRepository;
+        private PasswordHelper? _passvordHelper;
 
-        public UserResponse UserAuth(AuthUserRequest dataAuth)
+        private Mapper _mapper;
+
+        public UserService()
+        {
+            _userRepository = new();
+
+            var config = new MapperConfiguration(
+            cfg =>
+            {
+                cfg.AddProfile(new UserMapperProfileBll());
+            });
+            _mapper = new Mapper(config);
+        }
+
+        public UserBll UserAuth(AuthBll dataAuth)
         {
             _passvordHelper = new();
             _userRepository = new();
-            var data = _userRepository.UserAuth(dataAuth.Nick);
-            
-            if (data == null)
+            var user = _userRepository.UserAuth(dataAuth.Nick);
+
+            if (user is null)
             { 
                 return null;
             }
-            else
+            if(_passvordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
             {
-                UserResponse objAuth = new();
-                _passvordHelper.VerifyPassword(dataAuth.Password, data.Password, data.Salt);
-                objAuth.Id = data.Id;
-                objAuth.Nick = data.Nick;
-                objAuth.Name = data.Name;
-                return objAuth;
+                var result = _mapper.Map<UserBll>(user);
+                return result;
             }
+            return null;
         }
 
-        public UserResponse CreateUser(RegistrationUserRequest user)
+        public UserBll CreateUser(RegisterBll newUser)
         {
-            _userRepository = new();
             _passvordHelper = new();
-            UserDto userDto = new(); 
-            userDto.Password = _passvordHelper.HashPasword(user.Password, out var salt);
-            userDto.Salt = salt;
-            userDto.Name = user.Name;
-            userDto.Nick = user.Nick;
-            userDto.RegistrationDate = user.RegistrationDate;
-
-            var newUser = _userRepository.CreateUser(userDto);
-
-            UserResponse response = new();
-            response.Id = newUser.Id;
-            response.Name = newUser.Name;
-            response.Nick = newUser.Nick;
-            return response;
+            var result = _mapper.Map<UserDto>(newUser);
+            result.Password = _passvordHelper.HashPasword(result.Password, out var salt);
+            result.Salt = salt;
+            _userRepository = new();
+            var user = _userRepository.CreateUser(result);
+            var readyUser = _mapper.Map<UserBll>(user);
+            return readyUser;
         }
     }
 }

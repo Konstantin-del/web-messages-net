@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Messages.Core.Models.Requests;
-using Messages.Core.Models.Responses;
+using Messages.Web.Models.Requests;
+using Messages.Web.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 
 namespace Messages.Web.Controllers;

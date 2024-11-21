@@ -1,7 +1,6 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using Messages.Core.Models.Requests.Validators;
-using Messages.Core;
+using Messages.Web.Models.Requests.Validators;
 
 
 namespace Messages.Web

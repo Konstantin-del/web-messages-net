@@ -1,6 +1,8 @@
-﻿namespace Messages.Core.Models.Responses
+﻿
+
+namespace Messages.Bll.ModelsBll
 {
-    public class UserResponse
+    public class UserBll
     {
         public Guid Id { get; set; }
 
@@ -10,6 +12,6 @@
 
         public string? Token { get; set; }
 
-        public List<GetContactsUserResponse>? Contacts { get; set; }
+        //public List<GetContactsUserResponse>? Contacts { get; set; }
     }
 }
