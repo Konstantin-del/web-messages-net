@@ -13,7 +13,6 @@ namespace Messages.Web.Mappings
             CreateMap<UserBll, UserResponse>();
             CreateMap<AuthUserRequest, AuthBll>();  
             //.ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Role.Id));
-            //ReverseMap() => с этим сможет работать в обратную сторону но formember не работает тогда
         }
     }
 }

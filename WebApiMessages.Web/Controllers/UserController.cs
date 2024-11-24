@@ -6,9 +6,6 @@ using Messages.Web.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Messages.Web.Mappings;
-using Messages.Dal;
-using Messages.Dal.Dtos;
-
 
 namespace Messages.Web.Controllers;
 
@@ -16,11 +13,12 @@ namespace Messages.Web.Controllers;
 [Route("api/users")]
 public class UserController : Controller
 {
-    UserService? _userService;
-    JWT? _jwt;
+    UserService _userService;
+    JWT _jwt;
     Mapper _mapper;
     public UserController()
     {
+        _jwt = new();
         _userService = new();
 
         var config = new MapperConfiguration(
@@ -28,6 +26,7 @@ public class UserController : Controller
         {
             cfg.AddProfile(new UserMapperProfile());
         });
+
         _mapper = new Mapper(config);
     }
     
@@ -39,13 +38,11 @@ public class UserController : Controller
             return BadRequest("Invalid client request");
         }
         var result = _mapper.Map<RegisterBll>(modelRegister);
-        _userService = new();
         var user = _userService.CreateUser(result);
         
         if (user != null)
         {
             var newUser = _mapper.Map<UserResponse>(user);
-            _jwt = new();
             newUser.Token = _jwt.getToken();
             return Ok(newUser);
         }
@@ -60,13 +57,11 @@ public class UserController : Controller
             return BadRequest("Invalid client request");
         }
         var result = _mapper.Map<AuthBll>(authData);
-        _userService = new();
         var user = _userService.UserAuth(result);
 
         if (user != null)
         {
             var verifiedUser = _mapper.Map<UserResponse>(user);
-            _jwt = new();
             verifiedUser.Token = _jwt.getToken();
             return Ok(verifiedUser);
         }

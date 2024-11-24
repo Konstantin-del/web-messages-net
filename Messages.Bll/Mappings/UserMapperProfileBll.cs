@@ -9,7 +9,6 @@ public class UserMapperProfileBll : Profile
     {
         CreateMap<RegisterBll, UserDto>();
         CreateMap<UserDto, UserBll>().ReverseMap();
-        //.ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Role.Id));
-        //ReverseMap() => с этим сможет работать в обратную сторону но formember не работает тогда
+        //.ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Role.Id))
     }
 }

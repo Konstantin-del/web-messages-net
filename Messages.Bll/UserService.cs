@@ -8,27 +8,28 @@ namespace Messages.Bll
 {
     public class UserService
     {
-        private UserRepository? _userRepository;
-        private PasswordHelper? _passvordHelper;
-
-        private Mapper _mapper;
+        UserRepository _userRepository;
+        PasswordHelper _passvordHelper;
+        Mapper _mapper;
 
         public UserService()
         {
             _userRepository = new();
+            _passvordHelper = new();
 
             var config = new MapperConfiguration(
             cfg =>
             {
                 cfg.AddProfile(new UserMapperProfileBll());
             });
+
             _mapper = new Mapper(config);
         }
 
         public UserBll UserAuth(AuthBll dataAuth)
         {
             _passvordHelper = new();
-            _userRepository = new();
+           
             var user = _userRepository.UserAuth(dataAuth.Nick);
 
             if (user is null)
