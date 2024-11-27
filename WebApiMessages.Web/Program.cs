@@ -1,6 +1,10 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Messages.Bll.Interfaces;
+using Messages.Bll;
 using Messages.Web.Models.Requests.Validators;
+using Messages.Dal.Interfaces;
+using Messages.Dal;
 
 
 namespace Messages.Web
@@ -10,9 +14,10 @@ namespace Messages.Web
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
+            builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<IUserRepository, UserRepository>();
             // Add services to the container.
-            
+
             JWT.AddAuth(builder);
             
             builder.Services.AddControllers();

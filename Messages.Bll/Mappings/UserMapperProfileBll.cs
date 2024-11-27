@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using Messages.Dal.Dtos;
+using Messages.Dal.Entityes;
 using Messages.Bll.ModelsBll;
 
 namespace Messages.Bll.Mappings;
@@ -7,8 +7,8 @@ public class UserMapperProfileBll : Profile
 {
     public UserMapperProfileBll()
     {
-        CreateMap<RegisterBll, UserDto>();
-        CreateMap<UserDto, UserBll>().ReverseMap();
+        CreateMap<RegisterDto, UserEntity>();
+        CreateMap<UserEntity, UserDto>().ReverseMap();
         //.ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Role.Id))
     }
 }

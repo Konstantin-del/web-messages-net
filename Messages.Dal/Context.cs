@@ -1,13 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Messages.Dal.Dtos;
+using Messages.Dal.Entityes;
 
 namespace Messages.Dal
 {
     public class Context : DbContext
     {
-        public DbSet<UserDto> Users { get; set; }
+        public DbSet<UserEntity> Users { get; set; }
 
-        public DbSet<ContactDto> Contacts { get; set; }
+        public DbSet<ContactEntity> Contacts { get; set; }
 
         public DbSet<MessageDto> Messages { get; set; }
 

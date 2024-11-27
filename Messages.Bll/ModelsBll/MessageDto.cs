@@ -1,8 +1,7 @@
 ﻿
 namespace Messages.Bll.ModelsBll
 {
-    public class ContactBll
+    public class MessageDto
     {
-
     }
 }

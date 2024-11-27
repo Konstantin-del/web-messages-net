@@ -9,9 +9,9 @@ namespace Messages.Web.Mappings
     {
         public UserMapperProfile()
         {
-            CreateMap<RegistrationUserRequest, RegisterBll>();
-            CreateMap<UserBll, UserResponse>();
-            CreateMap<AuthUserRequest, AuthBll>();  
+            CreateMap<RegistrationUserRequest, RegisterDto>();
+            CreateMap<UserDto, UserResponse>();
+            CreateMap<AuthUserRequest, AuthenticateDto>();  
             //.ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Role.Id));
         }
     }

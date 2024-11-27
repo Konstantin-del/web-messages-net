@@ -1,5 +1,5 @@
 ﻿
-namespace Messages.Dal.Dtos
+namespace Messages.Dal.Entityes
 {
     public class MessageDto
     {
@@ -7,7 +7,7 @@ namespace Messages.Dal.Dtos
         public string Message { get; set; }
         public DateTime SendDate { get; set; }
         public bool IsDelivered { get; set; }
-        public UserDto Sender { get; set; }
-        public UserDto Recipient { get; set; }
+        public UserEntity Sender { get; set; }
+        public UserEntity Recipient { get; set; }
     }
 }

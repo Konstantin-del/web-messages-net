@@ -1,59 +1,58 @@
 ﻿using AutoMapper;
 using Messages.Bll.Mappings;
 using Messages.Bll.ModelsBll;
-using Messages.Dal.Dtos;
-using Messages.Dal;
+using Messages.Dal.Entityes;
+using Messages.Bll.Interfaces;
+using Messages.Dal.Interfaces;
 
-namespace Messages.Bll
+namespace Messages.Bll;
+
+public class UserService : IUserService
 {
-    public class UserService
+    IUserRepository _userRepository;
+    PasswordHelper _passvordHelper;
+    Mapper _mapper;
+
+    public UserService(IUserRepository userRepository)
     {
-        UserRepository _userRepository;
-        PasswordHelper _passvordHelper;
-        Mapper _mapper;
+        _userRepository = userRepository;
+        _passvordHelper = new();
 
-        public UserService()
+        var config = new MapperConfiguration(
+        cfg =>
         {
-            _userRepository = new();
-            _passvordHelper = new();
+            cfg.AddProfile(new UserMapperProfileBll());
+        });
 
-            var config = new MapperConfiguration(
-            cfg =>
-            {
-                cfg.AddProfile(new UserMapperProfileBll());
-            });
+        _mapper = new Mapper(config);
+    }
 
-            _mapper = new Mapper(config);
-        }
+    public async Task<UserDto> AuthenticateUserAsync(AuthenticateDto dataAuth)
+    {
+        _passvordHelper = new();
+       
+        var user = await _userRepository.AuthenticateUserAsync(dataAuth.Nick);
 
-        public UserBll UserAuth(AuthBll dataAuth)
-        {
-            _passvordHelper = new();
-           
-            var user = _userRepository.UserAuth(dataAuth.Nick);
-
-            if (user is null)
-            { 
-                return null;
-            }
-            if(_passvordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
-            {
-                var result = _mapper.Map<UserBll>(user);
-                return result;
-            }
+        if (user is null)
+        { 
             return null;
         }
-
-        public UserBll CreateUser(RegisterBll newUser)
+        if(_passvordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
         {
-            _passvordHelper = new();
-            var result = _mapper.Map<UserDto>(newUser);
-            result.Password = _passvordHelper.HashPasword(result.Password, out var salt);
-            result.Salt = salt;
-            _userRepository = new();
-            var user = _userRepository.CreateUser(result);
-            var readyUser = _mapper.Map<UserBll>(user);
-            return readyUser;
+            var result = _mapper.Map<UserDto>(user);
+            return result;
         }
+        return null;
+    }
+
+    public async Task<UserDto> CreateUserAsync(RegisterDto newUser)
+    {
+        _passvordHelper = new();
+        var result = _mapper.Map<UserEntity>(newUser);
+        result.Password =  _passvordHelper.HashPasword(result.Password, out var salt);
+        result.Salt = salt;
+        var user = await _userRepository.CreateUserAsync(result);
+        var readyUser = _mapper.Map<UserDto>(user);
+        return readyUser;
     }
 }

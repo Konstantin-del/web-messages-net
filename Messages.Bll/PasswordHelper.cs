@@ -2,7 +2,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Messages.Dal
+namespace Messages.Bll
 {
     public class PasswordHelper
     {

@@ -1,11 +1,11 @@
 ﻿
-namespace Messages.Dal.Dtos
+namespace Messages.Dal.Entityes
 {
-    public class ContactDto
+    public class ContactEntity
     {
         public int id { get; set; } 
         public Guid IdRecipiend { get; set; }
         public string NameContact { get; set; }
-        public UserDto Owner { get; set; }
+        public UserEntity Owner { get; set; }
     }
 }

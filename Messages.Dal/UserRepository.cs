@@ -1,8 +1,9 @@
-﻿using Messages.Dal.Dtos;
+﻿using Messages.Dal.Entityes;
+using Messages.Dal.Interfaces;
 
 namespace Messages.Dal
 {
-    public class UserRepository
+    public class UserRepository : IUserRepository
     {
         Context _context;
         public UserRepository()
@@ -10,16 +11,16 @@ namespace Messages.Dal
             _context = new();
         }
 
-        public UserDto UserAuth(string nick)
+        public async Task<UserEntity> AuthenticateUserAsync(string nick)
         {
             var authorizeUser = _context.Users.Where(s => s.Nick == nick).FirstOrDefault();
             return authorizeUser;
         }
 
-        public UserDto CreateUser(UserDto user)
+        public async Task<UserEntity> CreateUserAsync(UserEntity user)
         {    
             _context.Users.Add(user);
-            _context.SaveChanges();
+            await _context.SaveChangesAsync();
             return user;
         }
     }

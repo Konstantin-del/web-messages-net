@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Messages.Bll;
 using Messages.Bll.ModelsBll;
 using Messages.Web.Models.Requests;
 using Messages.Web.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Messages.Web.Mappings;
+using Messages.Bll.Interfaces;
 
 namespace Messages.Web.Controllers;
 
@@ -13,13 +13,13 @@ namespace Messages.Web.Controllers;
 [Route("api/users")]
 public class UserController : Controller
 {
-    UserService _userService;
+    private readonly IUserService _userService;
     JWT _jwt;
     Mapper _mapper;
-    public UserController()
+    public UserController(IUserService userService)
     {
         _jwt = new();
-        _userService = new();
+        _userService = userService;
 
         var config = new MapperConfiguration(
         cfg =>
@@ -31,14 +31,14 @@ public class UserController : Controller
     }
     
     [HttpPost]
-    public ActionResult <UserResponse> Create([FromBody] RegistrationUserRequest modelRegister)
+    public async Task<ActionResult<UserResponse>> CreateUserAsync([FromBody] RegistrationUserRequest modelRegister)
     {
         if (modelRegister is null)
         {
             return BadRequest("Invalid client request");
         }
-        var result = _mapper.Map<RegisterBll>(modelRegister);
-        var user = _userService.CreateUser(result);
+        var result = _mapper.Map<RegisterDto>(modelRegister);
+        var user = await _userService.CreateUserAsync(result);
         
         if (user != null)
         {
@@ -46,18 +46,20 @@ public class UserController : Controller
             newUser.Token = _jwt.getToken();
             return Ok(newUser);
         }
+
         return StatusCode(500);
     }
 
     [HttpPost("auth")] 
-    public ActionResult<UserResponse> Auth([FromBody] AuthUserRequest authData)
+    public async Task<ActionResult<UserResponse>> AuthenticateUserAsync([FromBody] AuthUserRequest authData)
     {
         if (authData is null)
         {
             return BadRequest("Invalid client request");
         }
-        var result = _mapper.Map<AuthBll>(authData);
-        var user = _userService.UserAuth(result);
+
+        var result = _mapper.Map<AuthenticateDto>(authData);
+        var user = await _userService.AuthenticateUserAsync(result);
 
         if (user != null)
         {

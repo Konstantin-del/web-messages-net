@@ -2,7 +2,7 @@
 
 namespace Messages.Bll.ModelsBll
 {
-    public class UserBll
+    public class UserDto
     {
         public Guid Id { get; set; }
 
