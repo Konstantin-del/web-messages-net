@@ -4,6 +4,7 @@ using Messages.Bll.ModelsBll;
 using Messages.Dal.Entityes;
 using Messages.Bll.Interfaces;
 using Messages.Dal.Interfaces;
+using Messages.Bll.Exceptions;
 
 namespace Messages.Bll;
 
@@ -28,31 +29,38 @@ public class UserService : IUserService
     }
 
     public async Task<UserDto> AuthenticateUserAsync(AuthenticateDto dataAuth)
-    {
-        _passvordHelper = new();
-       
+    {     
         var user = await _userRepository.AuthenticateUserAsync(dataAuth.Nick);
 
         if (user is null)
-        { 
-            return null;
+        {
+            throw new EntityNotFoundException("password or login does not found");
         }
-        if(_passvordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
+        else if(_passvordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
         {
             var result = _mapper.Map<UserDto>(user);
             return result;
         }
-        return null;
+        else
+        {
+            throw new EntityNotFoundException("password or login does not found");
+        }
     }
 
-    public async Task<UserDto> CreateUserAsync(RegisterDto newUser)
+    public async Task<UserDto> CreateUserAsync(RegisterDto user)
     {
-        _passvordHelper = new();
-        var result = _mapper.Map<UserEntity>(newUser);
+        var result = _mapper.Map<UserEntity>(user);
         result.Password =  _passvordHelper.HashPasword(result.Password, out var salt);
         result.Salt = salt;
-        var user = await _userRepository.CreateUserAsync(result);
-        var readyUser = _mapper.Map<UserDto>(user);
-        return readyUser;
+        var newUser = await _userRepository.CreateUserAsync(result);
+        if(newUser is null)
+        {
+            throw new FailedToCreateException("failed to create user");
+        }
+        else
+        {
+            var readyUser = _mapper.Map<UserDto>(newUser);
+            return readyUser;
+        }
     }
 }
