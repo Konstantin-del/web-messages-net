@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
 using Messages.Web.Mappings;
 using Messages.Bll.Interfaces;
+using Messages.Web.Configurations;
 
 namespace Messages.Web.Controllers;
 
@@ -14,11 +15,9 @@ namespace Messages.Web.Controllers;
 public class UserController : Controller
 {
     private readonly IUserService _userService;
-    JWT _jwt;
     Mapper _mapper;
     public UserController(IUserService userService)
     {
-        _jwt = new();
         _userService = userService;
 
         var config = new MapperConfiguration(
@@ -43,7 +42,7 @@ public class UserController : Controller
         if (user != null)
         {
             var newUser = _mapper.Map<UserResponse>(user);
-            newUser.Token = _jwt.getToken();
+            newUser.Token = JWT.GetToken();
             return Ok(newUser);
         }
 
@@ -64,7 +63,7 @@ public class UserController : Controller
         if (user != null)
         {
             var verifiedUser = _mapper.Map<UserResponse>(user);
-            verifiedUser.Token = _jwt.getToken();
+            verifiedUser.Token = JWT.GetToken();
             return Ok(verifiedUser);
         }
 

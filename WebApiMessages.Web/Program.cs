@@ -5,6 +5,7 @@ using Messages.Bll;
 using Messages.Web.Models.Requests.Validators;
 using Messages.Dal.Interfaces;
 using Messages.Dal;
+using Messages.Web.Configurations;
 
 
 namespace Messages.Web
@@ -18,7 +19,7 @@ namespace Messages.Web
             builder.Services.AddScoped<IUserRepository, UserRepository>();
             // Add services to the container.
 
-            JWT.AddAuth(builder);
+            builder.AddAuth();
             
             builder.Services.AddControllers();
 
@@ -45,6 +46,8 @@ namespace Messages.Web
             app.UseAuthentication();
             app.UseAuthorization();
 
+            app.UseMiddleware<ExceptionMiddleware>();
+
             app.MapControllers();
 
             app.Run();
@@ -52,7 +55,6 @@ namespace Messages.Web
 
 
             app.MapControllers();
-
             app.Run();
         }
     }
