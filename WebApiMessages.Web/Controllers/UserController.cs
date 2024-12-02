@@ -71,16 +71,14 @@ public class UserController : Controller
         return Ok(newItem);
     }
 
-    [HttpDelete("{id}"), Authorize]
-    public ActionResult Delete([FromRoute] Guid id)
+    [HttpDelete(), Authorize]
+    public async Task<ActionResult> Delete()
     {
-        try
-        {
-            return NoContent();
-        }
-        catch
-        {
-            return View();
-        }
+        string accessToken = Request.Headers[HeaderNames.Authorization];
+        accessToken = accessToken.Remove(0, 7);
+        var id = JWT.DecodeJwtAndReturnId(accessToken);
+        if (id == Guid.Empty) return BadRequest();
+        await _userService.DeleteUserAsync(id);
+        return NoContent();
     }
 }

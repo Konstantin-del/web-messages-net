@@ -75,4 +75,12 @@ public class UserService : IUserService
             return updateItem;
         }
     }
+
+    public async Task DeleteUserAsync(Guid id)
+    {
+        var user = await _userRepository.GetUserByIdAsync(id);
+        if (user is null)
+            throw new EntityNotFoundException("user not found");
+        await _userRepository.DeleteUserAsync(id);
+    }
 }

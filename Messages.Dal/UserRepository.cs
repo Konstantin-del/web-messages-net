@@ -1,5 +1,6 @@
 ﻿using Messages.Dal.Entityes;
 using Messages.Dal.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace Messages.Dal;
 
@@ -13,7 +14,7 @@ public class UserRepository : IUserRepository
 
     public async Task<UserEntity> AuthenticateUserAsync(string nick)
     {
-       return _context.Users.Where(s => s.Nick == nick).FirstOrDefault();
+       return _context.Users.FirstOrDefault(s => s.Nick == nick);
     }
 
     public async Task<UserEntity> CreateUserAsync(UserEntity user)
@@ -24,13 +25,21 @@ public class UserRepository : IUserRepository
         return result;
     }
 
+    public async Task<UserEntity> GetUserByIdAsync(Guid id) => _context.Users.FirstOrDefault(n => n.Id == id);
+
     public async Task<UpdateUserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName)
     {
         var user = _context.Users.FirstOrDefault(n=>n.Id == id);
         user.Name = userName.Name;
         await _context.SaveChangesAsync();
         UpdateUserEntity newUserName = new();
-        newUserName = _context.Users.FirstOrDefault(n => n.Id == id).Name == userName.Name ? userName : null;
+        newUserName.Name = user.Name;
         return newUserName;
+    }
+
+    public async Task DeleteUserAsync(Guid id)
+    {
+        await _context.Users.Where(n => n.Id == id).ExecuteDeleteAsync();
+        await _context.SaveChangesAsync();
     }
 }
