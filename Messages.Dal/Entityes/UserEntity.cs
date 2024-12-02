@@ -19,7 +19,7 @@ namespace Messages.Dal.Entityes
         [MaxLength(130, ErrorMessage = "Length must be less then 50 characters")]
         public string Password { get; set; }
         public byte[] Salt { get; set; }
-        public DateTime RegistrationDate { get; set; }
-        public List<ContactEntity> Contacts { get; set; }
+        public DateTimeOffset RegistrationDate { get; set; }
+        public List<ContactEntity>? Contacts { get; set; }
     }
 }

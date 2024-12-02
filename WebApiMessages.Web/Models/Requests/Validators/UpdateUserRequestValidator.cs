@@ -1,12 +1,11 @@
 ﻿using FluentValidation;
 
-namespace Messages.Web.Models.Requests.Validators
+namespace Messages.Web.Models.Requests.Validators;
+
+public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
 {
-    public class UpdateUserRequestValidator : AbstractValidator<UpdateUserRequest>
+    public UpdateUserRequestValidator()
     {
-        public UpdateUserRequestValidator()
-        {
-            RuleFor(x => x.Name).Length(1, 20);
-        }
+        RuleFor(x => x.Name).Length(1, 20);
     }
 }

@@ -17,9 +17,20 @@ public class UserRepository : IUserRepository
     }
 
     public async Task<UserEntity> CreateUserAsync(UserEntity user)
-    {    
+    {
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
-        return user;
+        var result  = _context.Users.FirstOrDefault(n => n.Nick == user.Nick);
+        return result;
+    }
+
+    public async Task<UpdateUserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName)
+    {
+        var user = _context.Users.FirstOrDefault(n=>n.Id == id);
+        user.Name = userName.Name;
+        await _context.SaveChangesAsync();
+        UpdateUserEntity newUserName = new();
+        newUserName = _context.Users.FirstOrDefault(n => n.Id == id).Name == userName.Name ? userName : null;
+        return newUserName;
     }
 }

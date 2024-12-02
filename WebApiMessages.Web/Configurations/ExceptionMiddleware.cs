@@ -43,7 +43,7 @@ public class ExceptionMiddleware
     private async Task HandleEntityNotFoundExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        context.Response.StatusCode = StatusCodes.Status404NotFound;
         await context.Response.WriteAsync(new ErrorDetails()
         {
             StatusCode = context.Response.StatusCode,
@@ -53,7 +53,7 @@ public class ExceptionMiddleware
     private async Task FailedToCreateExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        context.Response.StatusCode = StatusCodes.Status507InsufficientStorage;
         await context.Response.WriteAsync(new ErrorDetails()
         {
             StatusCode = context.Response.StatusCode,

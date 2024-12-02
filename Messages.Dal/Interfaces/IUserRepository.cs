@@ -8,5 +8,7 @@ namespace Messages.Dal.Interfaces
         Task<UserEntity> AuthenticateUserAsync(string nick);
 
         Task<UserEntity> CreateUserAsync(UserEntity user);
+
+        Task<UpdateUserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName);
     }
 }

@@ -7,6 +7,9 @@ using AutoMapper;
 using Messages.Web.Mappings;
 using Messages.Bll.Interfaces;
 using Messages.Web.Configurations;
+using Messages.Bll.Exceptions;
+using Microsoft.Net.Http.Headers;
+using System;
 
 namespace Messages.Web.Controllers;
 
@@ -32,55 +35,40 @@ public class UserController : Controller
     [HttpPost]
     public async Task<ActionResult<UserResponse>> CreateUserAsync([FromBody] RegistrationUserRequest modelRegister)
     {
-        if (modelRegister is null)
-        {
-            return BadRequest("Invalid client request");
-        }
         var result = _mapper.Map<RegisterDto>(modelRegister);
         var user = await _userService.CreateUserAsync(result);
-        
-        if (user != null)
-        {
-            var newUser = _mapper.Map<UserResponse>(user);
-            newUser.Token = JWT.GetToken();
-            return Ok(newUser);
-        }
-
-        return StatusCode(500);
+        var newUser = _mapper.Map<UserResponse>(user);
+        newUser.Token = JWT.GetToken(newUser.Id.ToString());
+        return Ok(newUser);
     }
 
     [HttpPost("auth")] 
     public async Task<ActionResult<UserResponse>> AuthenticateUserAsync([FromBody] AuthUserRequest authData)
     {
-        if (authData is null)
-        {
-            return BadRequest("Invalid client request");
-        }
-
         var result = _mapper.Map<AuthenticateDto>(authData);
         var user = await _userService.AuthenticateUserAsync(result);
-
-        if (user != null)
-        {
-            var verifiedUser = _mapper.Map<UserResponse>(user);
-            verifiedUser.Token = JWT.GetToken();
-            return Ok(verifiedUser);
-        }
-
-        return Unauthorized();
-    }
-
-    [HttpPut("{id}"), Authorize]    
-    public ActionResult Edit([FromRoute] Guid id, [FromBody] UpdateUserRequest modelUpdate)
-    {
         try
         {
-            return NoContent();  
+            var verifiedUser = _mapper.Map<UserResponse>(user);
+            verifiedUser.Token = JWT.GetToken(user.Id.ToString());
+            return Ok(verifiedUser);
         }
-        catch
+        catch 
         {
-            return View();
+            return Unauthorized();
         }
+    }
+
+    [HttpPatch(), Authorize]
+    public async Task<ActionResult<UpdateUserResponse>> Edit([FromBody] UpdateUserRequest modelUpdate)
+    {
+        string accessToken = Request.Headers[HeaderNames.Authorization];
+        accessToken = accessToken.Remove(0,7);
+        var id = JWT.DecodeJwtAndReturnId(accessToken);
+        if (id == Guid.Empty) return BadRequest();
+        var result = _mapper.Map<UpdateUserDto>(modelUpdate);
+        var newItem = await _userService.UpdateUserAsync(id, result);
+        return Ok(newItem);
     }
 
     [HttpDelete("{id}"), Authorize]

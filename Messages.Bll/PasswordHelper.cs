@@ -4,12 +4,12 @@ using System.Text;
 
 namespace Messages.Bll;
 
-public class PasswordHelper
+internal class PasswordHelper
 {
     const int keySize = 64;
     const int iterations = 350000;
     HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
-    public string HashPasword(string password, out byte[] salt)
+    internal string HashPasword(string password, out byte[] salt)
     {
         salt = RandomNumberGenerator.GetBytes(keySize);
 

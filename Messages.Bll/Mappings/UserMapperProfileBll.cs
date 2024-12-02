@@ -9,6 +9,7 @@ public class UserMapperProfileBll : Profile
     {
         CreateMap<RegisterDto, UserEntity>();
         CreateMap<UserEntity, UserDto>().ReverseMap();
+        CreateMap<UpdateUserDto, UpdateUserEntity>().ReverseMap();
         //.ForMember(dest => dest.RoleId, opt => opt.MapFrom(src => src.Role.Id))
     }
 }

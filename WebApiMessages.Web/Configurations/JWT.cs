@@ -4,12 +4,11 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-
 namespace Messages.Web.Configurations;
 
 public static class JWT
 {
-    public static void AddAuth(this WebApplicationBuilder builder)
+    internal static void AddAuth(this WebApplicationBuilder builder)
     {
         builder.Services.AddAuthentication(opt => {
             opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -24,24 +23,36 @@ public static class JWT
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = "https://localhost:7166",
-                ValidAudience = "https://localhost:3000",
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("superSecretKey@345"))
+                ValidAudience = "https://localhost:7166",
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SUPER-message-superSecretKey@345"))
             };
         });
     }
 
-    public static string GetToken()
+    internal static string GetToken(string id)
     {
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SUPER-message-superSecretKey@345"));
         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
         var tokeOptions = new JwtSecurityToken(
             issuer: "https://localhost:7166",
-            audience: "https://localhost:3000",
-            //claims: new List<Claim>() { new Claim("id", id.ToString()) },
-            expires: DateTime.Now.AddMinutes(6000),
+            audience: "https://localhost:7166",
+            claims: new List<Claim>() { new Claim("id", id) },
+            expires: DateTime.Now.AddMinutes(60000),
             signingCredentials: signinCredentials
         );
         return new JwtSecurityTokenHandler().WriteToken(tokeOptions);
+    }
+
+    public static Guid DecodeJwtAndReturnId(string jwt)
+    {    
+        var handler = new JwtSecurityTokenHandler();
+        var token = handler.ReadJwtToken(jwt);
+        //var keyId = token.Header.Kid;
+        //var audience = token.Audiences.ToList();
+        //var claims = token.Claims.Select(claim => (claim.Type, claim.Value)).ToList();
+        var result = token.Claims.FirstOrDefault(n => n.Type == "id").Value;
+        var id = Guid.Parse(result);
+        return id;
     }
 }
 
