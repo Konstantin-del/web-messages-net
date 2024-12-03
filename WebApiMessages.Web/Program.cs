@@ -5,8 +5,10 @@ using Messages.Bll;
 using Messages.Web.Models.Requests.Validators;
 using Messages.Dal.Interfaces;
 using Messages.Dal;
-using Messages.Web.Configurations;
-
+using Messages.Web.Utils;
+using Microsoft.EntityFrameworkCore;
+using Messages.Web.Mappings;
+using Messages.Bll.Mappings;
 
 namespace Messages.Web;
 
@@ -15,12 +17,28 @@ public class Program
     public static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
-        builder.Services.AddScoped<IUserService, UserService>();
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
-        // Add services to the container.
+ 
+        builder.Configuration
+            .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+            .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+            .AddJsonFile("appsettings.secrets.json", optional: true, reloadOnChange: true)
+            .AddCommandLine(args)
+            .AddEnvironmentVariables()
+            .Build();
+        var connectionString = builder.Configuration.GetConnectionString("DBConnectionString"); 
 
         builder.AddAuth();
+
+        builder.Services.AddDbContext<Context>(options => options.UseNpgsql(connectionString));
+
+        builder.Services.AddScoped<IUserService, UserService>();
+        builder.Services.AddScoped<IContactService, ContactService>();
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
         
+        builder.Services.AddAutoMapper(typeof(UserMapperProfile), typeof(UserMapperProfileBll));
+        // Add services to the container.
+
         builder.Services.AddControllers();
 
         builder.Services.AddFluentValidationAutoValidation();
@@ -52,7 +70,6 @@ public class Program
 
         app.Run();
         app.UseAuthorization();
-
 
         app.MapControllers();
         app.Run();

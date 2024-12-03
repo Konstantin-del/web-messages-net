@@ -4,42 +4,42 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Messages.Dal;
 
-public class UserRepository : IUserRepository
+public class UserRepository(Context context) : IUserRepository
 {
-    Context _context;
-    public UserRepository()
-    {
-        _context = new();
-    }
-
     public async Task<UserEntity> AuthenticateUserAsync(string nick)
     {
-       return _context.Users.FirstOrDefault(s => s.Nick == nick);
+       return await context.Users.FirstOrDefaultAsync(s => s.Nick == nick);
     }
 
     public async Task<UserEntity> CreateUserAsync(UserEntity user)
     {
-        _context.Users.Add(user);
-        await _context.SaveChangesAsync();
-        var result  = _context.Users.FirstOrDefault(n => n.Nick == user.Nick);
+        await context.Users.AddAsync(user);
+        await context.SaveChangesAsync();
+        var result  = context.Users.FirstOrDefault(n => n.Nick == user.Nick);
         return result;
     }
 
-    public async Task<UserEntity> GetUserByIdAsync(Guid id) => _context.Users.FirstOrDefault(n => n.Id == id);
-
-    public async Task<UpdateUserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName)
+    public async Task<UserEntity> GetUserByIdAsync(Guid id)
     {
-        var user = _context.Users.FirstOrDefault(n=>n.Id == id);
+        return await context.Users.FirstOrDefaultAsync(n => n.Id == id);
+    }
+
+    public async Task<UserEntity> GetUserByNickAsync(string nick)
+    {
+        return await context.Users.FirstOrDefaultAsync(n => n.Nick == nick);
+    }
+
+    public async Task<UserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName)
+    {
+        var user = await context.Users.FirstOrDefaultAsync(n => n.Id == id);
         user.Name = userName.Name;
-        await _context.SaveChangesAsync();
-        UpdateUserEntity newUserName = new();
-        newUserName.Name = user.Name;
-        return newUserName;
+        await context.SaveChangesAsync();
+        return user;
     }
 
     public async Task DeleteUserAsync(Guid id)
     {
-        await _context.Users.Where(n => n.Id == id).ExecuteDeleteAsync();
-        await _context.SaveChangesAsync();
+        await context.Users.Where(n => n.Id == id).ExecuteDeleteAsync();
+        await context.SaveChangesAsync();
     }
 }

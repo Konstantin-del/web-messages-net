@@ -9,9 +9,11 @@ public interface IUserRepository
 
     Task<UserEntity> CreateUserAsync(UserEntity user);
 
-    Task<UpdateUserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName);
+    Task<UserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName);
 
     Task DeleteUserAsync(Guid id);
 
     Task<UserEntity> GetUserByIdAsync(Guid id);
+
+    Task<UserEntity> GetUserByNickAsync(string nick);
 }

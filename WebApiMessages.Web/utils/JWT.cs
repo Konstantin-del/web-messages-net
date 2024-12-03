@@ -4,7 +4,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Messages.Web.Configurations;
+namespace Messages.Web.Utils;
 
 public static class JWT
 {

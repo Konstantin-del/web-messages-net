@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Messages.Bll.Mappings;
 using Messages.Bll.ModelsBll;
 using Messages.Dal.Entityes;
 using Messages.Bll.Interfaces;
@@ -8,79 +7,52 @@ using Messages.Bll.Exceptions;
 
 namespace Messages.Bll;
 
-public class UserService : IUserService
+public class UserService(IUserRepository userRepository, IMapper mapper, IPasswordHelper passwordHelper) : IUserService
 {
-    IUserRepository _userRepository;
-    PasswordHelper _passvordHelper;
-    Mapper _mapper;
-
-    public UserService(IUserRepository userRepository)
-    {
-        _userRepository = userRepository;
-        _passvordHelper = new();
-
-        var config = new MapperConfiguration(
-        cfg =>
-        {
-            cfg.AddProfile(new UserMapperProfileBll());
-        });
-
-        _mapper = new Mapper(config);
-    }
-
     public async Task<UserDto> AuthenticateUserAsync(AuthenticateDto dataAuth)
     {     
-        var user = await _userRepository.AuthenticateUserAsync(dataAuth.Nick);
-        if(user != null && _passvordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
-        {
-            var result = _mapper.Map<UserDto>(user);
-            return result;
-        }
+        var user = await userRepository.AuthenticateUserAsync(dataAuth.Nick);
+        if(user != null && passwordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
+            return mapper.Map<UserDto>(user);
         else
-        {
             throw new EntityNotFoundException("password or login does not found");
-        }
     }
 
     public async Task<UserDto> CreateUserAsync(RegisterDto user)
     {
-        var result = _mapper.Map<UserEntity>(user);
-        result.Password =  _passvordHelper.HashPasword(result.Password, out var salt);
+        var entity = await userRepository.GetUserByNickAsync(user.Nick);
+        if (entity != null)
+            throw new UserAlreadyExistsException("this nick already exists");
+        var result = mapper.Map<UserEntity>(user);
+        result.Password =  passwordHelper.HashPasword(result.Password, out var salt);
         result.Salt = salt;
         result.RegistrationDate = DateTimeOffset.UtcNow;
-        var newUser = await _userRepository.CreateUserAsync(result);
+        var newUser = await userRepository.CreateUserAsync(result);
         if (newUser is null)
-        {
             throw new FailedToCreateException("failed to create user");
-        }
-        else
-        {
-            var readyUser = _mapper.Map<UserDto>(newUser);
-           return readyUser;
-        }
+        var readyUser = mapper.Map<UserDto>(newUser);
+        return readyUser;
     }
 
     public async Task<UpdateUserDto> UpdateUserAsync(Guid id, UpdateUserDto item)
     {
-        
-        var newItem = _mapper.Map<UpdateUserEntity>(item);
-        var result = await _userRepository.UpdateUserAsync(id, newItem);
-        var updateItem = _mapper.Map<UpdateUserDto>(result);
-        if (updateItem is null)
-        {
-            throw new FailedToCreateException("failed to create user");
-        }
-        else
-        {
-            return updateItem;
-        }
+        var user = await userRepository.GetUserByIdAsync(id);
+        if (user is null)
+            throw new FailedToCreateException("failed to update user");
+        var newItem = mapper.Map<UpdateUserEntity>(item);
+        var result = await userRepository.UpdateUserAsync(id, newItem);
+        if (result is null)
+            throw new FailedToCreateException("failed to update user");
+        UpdateUserDto updateItem = new();
+        updateItem.Name = result.Name;
+        return updateItem;  
     }
 
     public async Task DeleteUserAsync(Guid id)
     {
-        var user = await _userRepository.GetUserByIdAsync(id);
+        var user = await userRepository.GetUserByIdAsync(id);
         if (user is null)
             throw new EntityNotFoundException("user not found");
-        await _userRepository.DeleteUserAsync(id);
+        await userRepository.DeleteUserAsync(id);
     }
 }

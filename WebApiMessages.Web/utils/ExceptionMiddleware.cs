@@ -1,7 +1,7 @@
 ﻿using Messages.Bll.Exceptions;
 using System.Net;
 
-namespace Messages.Web.Configurations;
+namespace Messages.Web.Utils;
 
 public class ExceptionMiddleware
 {
@@ -16,6 +16,10 @@ public class ExceptionMiddleware
         {
             await _next(httpContext);
         }
+        catch (UserAlreadyExistsException ex)
+        {
+            await UserAlreadyExistsExceptionAsync(httpContext, ex);
+        }
         catch (EntityNotFoundException ex)
         {
             await HandleEntityNotFoundExceptionAsync(httpContext, ex);
@@ -28,6 +32,7 @@ public class ExceptionMiddleware
         {
             await HandleExceptionAsync(httpContext, ex);
         }
+
     }
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
@@ -54,6 +59,17 @@ public class ExceptionMiddleware
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = StatusCodes.Status507InsufficientStorage;
+        await context.Response.WriteAsync(new ErrorDetails()
+        {
+            StatusCode = context.Response.StatusCode,
+            Message = exception.Message
+        }.ToString());
+    }
+
+    private async Task UserAlreadyExistsExceptionAsync(HttpContext context, Exception exception)
+    {
+        context.Response.ContentType = "application/json";
+        context.Response.StatusCode = StatusCodes.Status400BadRequest;
         await context.Response.WriteAsync(new ErrorDetails()
         {
             StatusCode = context.Response.StatusCode,

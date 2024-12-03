@@ -4,40 +4,22 @@ using Messages.Web.Models.Requests;
 using Messages.Web.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
 using AutoMapper;
-using Messages.Web.Mappings;
 using Messages.Bll.Interfaces;
-using Messages.Web.Configurations;
-using Messages.Bll.Exceptions;
+using Messages.Web.Utils;
 using Microsoft.Net.Http.Headers;
-using System;
 
 namespace Messages.Web.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public class UserController : Controller
-{
-    private readonly IUserService _userService;
-    Mapper _mapper;
-    public UserController(IUserService userService)
-    {
-        _userService = userService;
-
-        var config = new MapperConfiguration(
-        cfg =>
-        {
-            cfg.AddProfile(new UserMapperProfile());
-        });
-
-        _mapper = new Mapper(config);
-    }
-    
+public class UserController(IUserService userService,IMapper mapper) : Controller
+{ 
     [HttpPost]
     public async Task<ActionResult<UserResponse>> CreateUserAsync([FromBody] RegistrationUserRequest modelRegister)
     {
-        var result = _mapper.Map<RegisterDto>(modelRegister);
-        var user = await _userService.CreateUserAsync(result);
-        var newUser = _mapper.Map<UserResponse>(user);
+        var result = mapper.Map<RegisterDto>(modelRegister);
+        var user = await userService.CreateUserAsync(result);
+        var newUser = mapper.Map<UserResponse>(user);
         newUser.Token = JWT.GetToken(newUser.Id.ToString());
         return Ok(newUser);
     }
@@ -45,11 +27,11 @@ public class UserController : Controller
     [HttpPost("auth")] 
     public async Task<ActionResult<UserResponse>> AuthenticateUserAsync([FromBody] AuthUserRequest authData)
     {
-        var result = _mapper.Map<AuthenticateDto>(authData);
-        var user = await _userService.AuthenticateUserAsync(result);
+        var result = mapper.Map<AuthenticateDto>(authData);
+        var user = await userService.AuthenticateUserAsync(result);
         try
         {
-            var verifiedUser = _mapper.Map<UserResponse>(user);
+            var verifiedUser = mapper.Map<UserResponse>(user);
             verifiedUser.Token = JWT.GetToken(user.Id.ToString());
             return Ok(verifiedUser);
         }
@@ -66,8 +48,8 @@ public class UserController : Controller
         accessToken = accessToken.Remove(0,7);
         var id = JWT.DecodeJwtAndReturnId(accessToken);
         if (id == Guid.Empty) return BadRequest();
-        var result = _mapper.Map<UpdateUserDto>(modelUpdate);
-        var newItem = await _userService.UpdateUserAsync(id, result);
+        var result = mapper.Map<UpdateUserDto>(modelUpdate);
+        var newItem = await userService.UpdateUserAsync(id, result);
         return Ok(newItem);
     }
 
@@ -78,7 +60,7 @@ public class UserController : Controller
         accessToken = accessToken.Remove(0, 7);
         var id = JWT.DecodeJwtAndReturnId(accessToken);
         if (id == Guid.Empty) return BadRequest();
-        await _userService.DeleteUserAsync(id);
+        await userService.DeleteUserAsync(id);
         return NoContent();
     }
 }

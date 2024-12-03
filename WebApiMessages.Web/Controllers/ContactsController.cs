@@ -2,24 +2,26 @@
 using Messages.Web.Models.Requests;
 using Messages.Web.Models.Responses;
 using Microsoft.AspNetCore.Authorization;
+using Messages.Web.Utils;
+using Microsoft.Net.Http.Headers;
+using AutoMapper;
+using Messages.Bll.Interfaces;
 
 namespace Messages.Web.Controllers;
 
 [Route("api/contacts")]
 [ApiController, Authorize]
-public class ContactsController : Controller
+public class ContactsController(IMapper mapper, IContactService contactService ) : Controller
 {
-    [HttpPost("{id}")]
-    public ActionResult Create([FromRoute] Guid id, [FromBody] CreateContactRequest contact)
+    [HttpPost()]
+    public ActionResult Create( [FromBody] CreateContactRequest contact)
     {
-        try
-        {
-            return NoContent();
-        }
-        catch
-        {
-            return View();
-        }
+        //string accessToken = Request.Headers[HeaderNames.Authorization];
+        //accessToken = accessToken.Remove(0, 7);
+        //var id = JWT.DecodeJwtAndReturnId(accessToken);
+        //if (id == Guid.Empty) return BadRequest();
+
+        return View();
     }
 
     [HttpGet("{id}")]

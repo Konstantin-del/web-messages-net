@@ -1,15 +1,15 @@
-﻿
+﻿using Messages.Bll.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Messages.Bll;
 
-internal class PasswordHelper
+public class PasswordHelper : IPasswordHelper
 {
     const int keySize = 64;
     const int iterations = 350000;
     HashAlgorithmName hashAlgorithm = HashAlgorithmName.SHA512;
-    internal string HashPasword(string password, out byte[] salt)
+    public string HashPasword(string password, out byte[] salt)
     {
         salt = RandomNumberGenerator.GetBytes(keySize);
 
