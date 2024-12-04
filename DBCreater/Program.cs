@@ -1,4 +1,8 @@
 ﻿using Messages.Dal;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace DBCreater
 {
@@ -6,8 +10,8 @@ namespace DBCreater
     {
         static void Main(string[] args)
         {
-            Context context = new Context();
-            context.Database.EnsureCreated();
+  
+            Context.context.Database.EnsureCreated();
 
             //var result = context.RequestsForAdd.ToList();
 

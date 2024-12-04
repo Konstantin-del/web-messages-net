@@ -12,7 +12,7 @@ using Messages.Bll.Mappings;
 
 namespace Messages.Web;
 
-public class Program
+public class Program()
 {
     public static void Main(string[] args)
     {
@@ -30,13 +30,19 @@ public class Program
         builder.AddAuth();
 
         builder.Services.AddDbContext<Context>(options => options.UseNpgsql(connectionString));
-
+        
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IContactService, ContactService>();
-        builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
-        
-        builder.Services.AddAutoMapper(typeof(UserMapperProfile), typeof(UserMapperProfileBll));
+
+        builder.Services.AddScoped<IUserRepository, UserRepository>();
+        builder.Services.AddScoped<IContactRepository, ContactRepository>();   
+
+        builder.Services.AddAutoMapper(
+            typeof(UserMapperProfile),
+            typeof(UserMapperProfileBll),
+            typeof(ContactMapperProfileBll)
+        );
         // Add services to the container.
 
         builder.Services.AddControllers();

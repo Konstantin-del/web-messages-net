@@ -20,6 +20,6 @@ namespace Messages.Dal.Entityes
         public string Password { get; set; }
         public byte[] Salt { get; set; }
         public DateTimeOffset RegistrationDate { get; set; }
-        public List<ContactEntity>? Contacts { get; set; }
+        public ICollection<ContactEntity> Contacts { get; set; }
     }
 }
