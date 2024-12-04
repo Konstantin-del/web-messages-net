@@ -7,12 +7,23 @@ using Messages.Bll.Exceptions;
 
 namespace Messages.Bll;
 
-public class UserService(IUserRepository userRepository, IMapper mapper, IPasswordHelper passwordHelper) : IUserService
+public class UserService(
+    IUserRepository userRepository,
+    IContactService contactService,
+    IMapper mapper,
+    IPasswordHelper passwordHelper
+) : IUserService
+
 {
     public async Task<UserDto> AuthenticateUserAsync(AuthenticateDto dataAuth)
     {     
         var user = await userRepository.AuthenticateUserAsync(dataAuth.Nick);
-        if(user != null && passwordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
+        user.Contacts = await contactService.GetContactByIdOwnerAsync(user.Id);
+        foreach (var item in user.Contacts)
+        {
+            Console.WriteLine(item.NameContact);
+        }
+        if (user != null && passwordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
             return mapper.Map<UserDto>(user);
         else
             throw new EntityNotFoundException("password or login does not found");
@@ -20,6 +31,7 @@ public class UserService(IUserRepository userRepository, IMapper mapper, IPasswo
 
     public async Task<UserDto> CreateUserAsync(RegisterDto user)
     {
+        userRepository.CreateDB();
         var entity = await userRepository.GetUserByNickAsync(user.Nick);
         if (entity != null)
             throw new UserAlreadyExistsException("this nick already exists");

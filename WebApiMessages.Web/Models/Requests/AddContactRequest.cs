@@ -1,6 +1,6 @@
-﻿namespace Messages.Web.Models.Responses
+﻿namespace Messages.Web.Models.Requests
 {
-    public class GetContactsUserResponse
+    public class AddContactRequest
     {
         public Guid RecipientId { get; set; }
         public string NameContact { get; set; }

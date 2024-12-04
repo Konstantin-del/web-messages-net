@@ -1,5 +1,6 @@
 ﻿
 using Messages.Bll.ModelsBll;
+using Messages.Dal.Entityes;
 using System.Runtime.CompilerServices;
 
 namespace Messages.Bll.Interfaces;

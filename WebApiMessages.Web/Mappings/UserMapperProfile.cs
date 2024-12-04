@@ -11,6 +11,7 @@ public class UserMapperProfile : Profile
     {
         CreateMap<RegistrationUserRequest, RegisterDto>();
         CreateMap<UserDto, UserResponse>();
+        CreateMap<ContactDto, GetContactsUserResponse>();
         CreateMap<AuthUserRequest, AuthenticateDto>();
         CreateMap<UpdateUserRequest, UpdateUserDto>();
         CreateMap<UpdateUserDto, UpdateUserResponse>();

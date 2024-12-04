@@ -16,4 +16,5 @@ public interface IUserRepository
     Task<UserEntity> GetUserByIdAsync(Guid id);
 
     Task<UserEntity> GetUserByNickAsync(string nick);
+    void CreateDB();
 }

@@ -12,6 +12,6 @@ namespace Messages.Bll.ModelsBll
 
         public string? Token { get; set; }
 
-        //public List<GetContactsUserResponse>? Contacts { get; set; }
+        public List<ContactDto>? Contacts { get; set; }
     }
 }

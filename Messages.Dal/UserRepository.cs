@@ -6,6 +6,10 @@ namespace Messages.Dal;
 
 public class UserRepository(Context context) : IUserRepository
 {
+    public void CreateDB()
+    {
+        context.Database.EnsureCreated();
+    }
     public async Task<UserEntity> AuthenticateUserAsync(string nick)
     {
        return await context.Users.FirstOrDefaultAsync(s => s.Nick == nick);
@@ -15,7 +19,7 @@ public class UserRepository(Context context) : IUserRepository
     {
         await context.Users.AddAsync(user);
         await context.SaveChangesAsync();
-        var result  = context.Users.FirstOrDefault(n => n.Nick == user.Nick);
+        var result = await context.Users.FirstOrDefaultAsync(n => n.Nick == user.Nick);
         return result;
     }
 
