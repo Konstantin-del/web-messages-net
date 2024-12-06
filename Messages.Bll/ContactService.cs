@@ -14,7 +14,8 @@ public class ContactService(
 {
     public async Task<ContactDto> AddContactAsync(ContactDto contact)
     {
-        bool isExists = contactRepository.IsContactByIdAsync(contact.OwnerId, contact.RecipientId).Result;
+        Console.WriteLine(contact.RecipiendId);
+        bool isExists = contactRepository.IsContactByIdAsync(contact.OwnerId, contact.RecipiendId).Result;
         if (isExists)
             throw new UserAlreadyExistsException("this contact already exists");
         var result = mapper.Map<ContactEntity>(contact);
@@ -26,12 +27,33 @@ public class ContactService(
         return item;
     }
 
-    public async Task<List<ContactEntity>> GetContactByIdOwnerAsync(Guid idOwner)
+    public async Task<List<ContactDto>> GetContactByIdOwnerAsync(Guid idOwner)
     {
-        return await contactRepository.GetContactByIdOwnerAsync(idOwner);
+        var items = await contactRepository.GetContactByIdOwnerAsync(idOwner);
+        if(items is null)
+            throw new EntityNotFoundException("contacts does not found");
+        var contacts = mapper.Map<List<ContactDto>>(items);
+        return contacts;
     }
 
+    public async Task<ContactDto> UpdateContactAsync(ContactDto updateContact)
+    {
+        bool isExists = contactRepository.IsContactByIdAsync(updateContact.OwnerId, updateContact.RecipiendId).Result;
+        if (!isExists)
+            throw new EntityNotFoundException("contacts does not found");
+        var contact = mapper.Map<ContactEntity>(updateContact);
+        var newContact = await contactRepository.UpdateContactAsync(contact);
+        var result = mapper.Map<ContactDto>(newContact);
+        return result;
+    }
 
+    public async Task DeleteContactAsync(Guid idOwner, Guid idRecipiend)
+    {
+        bool isExists = contactRepository.IsContactByIdAsync(idOwner, idRecipiend).Result;
+        if (!isExists)
+            throw new EntityNotFoundException("contacts does not found");
+        await contactRepository.DeleteContactAsync(idOwner, idRecipiend);
+    }
 
 
 }

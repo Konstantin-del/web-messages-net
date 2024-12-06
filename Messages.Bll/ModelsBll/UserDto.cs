@@ -10,8 +10,6 @@ namespace Messages.Bll.ModelsBll
 
         public string Nick { get; set; }
 
-        public string? Token { get; set; }
-
-        public List<ContactDto>? Contacts { get; set; }
+        public string Token { get; set; }
     }
 }

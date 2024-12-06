@@ -9,7 +9,6 @@ namespace Messages.Bll;
 
 public class UserService(
     IUserRepository userRepository,
-    IContactService contactService,
     IMapper mapper,
     IPasswordHelper passwordHelper
 ) : IUserService
@@ -18,11 +17,6 @@ public class UserService(
     public async Task<UserDto> AuthenticateUserAsync(AuthenticateDto dataAuth)
     {     
         var user = await userRepository.AuthenticateUserAsync(dataAuth.Nick);
-        user.Contacts = await contactService.GetContactByIdOwnerAsync(user.Id);
-        foreach (var item in user.Contacts)
-        {
-            Console.WriteLine(item.NameContact);
-        }
         if (user != null && passwordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
             return mapper.Map<UserDto>(user);
         else

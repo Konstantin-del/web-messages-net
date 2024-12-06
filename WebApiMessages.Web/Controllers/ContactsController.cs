@@ -12,55 +12,52 @@ namespace Messages.Web.Controllers;
 
 [Route("api/contacts")]
 [ApiController, Authorize]
-public class ContactsController(IMapper mapper, IContactService contactService ) : Controller
+public class ContactsController(IMapper mapper, IContactService contactService) : Controller
 {
     [HttpPost()]
     public async Task<ActionResult<AddContactRespons>> AddContactAsync( [FromBody] AddContactRequest contact)
     {
-        Console.WriteLine(contact.RecipientId);
         string accessToken = Request.Headers[HeaderNames.Authorization];
         accessToken = accessToken.Remove(0, 7);
         var id = JWT.DecodeJwtAndReturnId(accessToken);
         if (id == Guid.Empty) return BadRequest();
         var result = mapper.Map<ContactDto>(contact);
         result.OwnerId = id;
-        Console.WriteLine(result.RecipientId);
         var item = await contactService.AddContactAsync(result);
         return Ok(item);
     }
 
-    //[HttpGet("{id}")]
-    //public ActionResult<GetContactsUserResponse> getContacts([FromRoute] Guid id)
-    //{
-    //    try
-    //    {
-    //        GetContactsUserResponse contacts = new();
-    //        return Ok(contacts);
-    //    }
-    //    catch
-    //    {
-    //        return View();
-    //    }
-    //}
+    [HttpGet]
+    public async Task<ActionResult<List<GetContactsUserResponse>>> getContacts()
+    {
+        string accessToken = Request.Headers[HeaderNames.Authorization];
+        accessToken = accessToken.Remove(0, 7);
+        var id = JWT.DecodeJwtAndReturnId(accessToken);
+        var items = await contactService.GetContactByIdOwnerAsync(id);
+        var result = mapper.Map<List<GetContactsUserResponse>>(items);
+        return result;
+    }
 
-    //[HttpPut("{id}")]
-    //public ActionResult Edit([FromRoute] Guid id, [FromBody] UpdateContactRequest nameContact)
-    //{
-    //    UpdateContactRequest contactName = new();
+    [HttpPatch]
+    public async Task<ActionResult<UpdateContactResponse>> EditContact([FromBody] UpdateContactRequest updateContact)
+    {
+        string accessToken = Request.Headers[HeaderNames.Authorization];
+        accessToken = accessToken.Remove(0, 7);
+        var idOwner = JWT.DecodeJwtAndReturnId(accessToken);
+        var result = mapper.Map<ContactDto>(updateContact);
+        result.OwnerId = idOwner;
+        var newContact = await contactService.UpdateContactAsync(result);
+        var contact = mapper.Map<UpdateContactResponse>(newContact);
+        return Ok(contact);
+    }
 
-    //    return Ok(contactName);
-    //}
-
-    //[HttpDelete("{id}")]
-    //public ActionResult Delete([FromRoute] Guid id)
-    //{
-    //    try
-    //    {
-    //        return RedirectToAction(nameof(Index));
-    //    }
-    //    catch
-    //    {
-    //        return View();
-    //    }
-    //}
+    [HttpDelete()]
+    public async Task<ActionResult> DeleteContact([FromBody] DeleteContactRequest RecipientId)
+    {
+        string accessToken = Request.Headers[HeaderNames.Authorization];
+        accessToken = accessToken.Remove(0, 7);
+        var idOwner = JWT.DecodeJwtAndReturnId(accessToken);
+        await contactService.DeleteContactAsync(idOwner, RecipientId.IdRecipient);
+        return NoContent();
+    }
 }

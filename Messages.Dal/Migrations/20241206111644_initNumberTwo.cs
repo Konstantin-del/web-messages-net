@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Messages.Dal.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialMigration : Migration
+    public partial class initNumberTwo : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -32,13 +32,13 @@ namespace Messages.Dal.Migrations
                 name: "Contacts",
                 columns: table => new
                 {
-                    RecipientId = table.Column<Guid>(type: "uuid", nullable: false),
+                    RecipiendId = table.Column<Guid>(type: "uuid", nullable: false),
                     OwnerId = table.Column<Guid>(type: "uuid", nullable: false),
                     NameContact = table.Column<string>(type: "character varying(20)", maxLength: 20, nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Contacts", x => new { x.OwnerId, x.RecipientId });
+                    table.PrimaryKey("PK_Contacts", x => new { x.OwnerId, x.RecipiendId });
                     table.ForeignKey(
                         name: "FK_Contacts_Users_OwnerId",
                         column: x => x.OwnerId,
@@ -54,17 +54,17 @@ namespace Messages.Dal.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Message = table.Column<string>(type: "text", nullable: false),
-                    SendDate = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    IsDelivered = table.Column<bool>(type: "boolean", nullable: false),
+                    SendDate = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
+                    IsDelivered = table.Column<bool>(type: "boolean", nullable: false, defaultValue: false),
                     SenderId = table.Column<Guid>(type: "uuid", nullable: false),
-                    RecipientId = table.Column<Guid>(type: "uuid", nullable: false)
+                    RecipiendId = table.Column<Guid>(type: "uuid", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Messages", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Messages_Users_RecipientId",
-                        column: x => x.RecipientId,
+                        name: "FK_Messages_Users_RecipiendId",
+                        column: x => x.RecipiendId,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -77,14 +77,20 @@ namespace Messages.Dal.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Messages_RecipientId",
+                name: "IX_Messages_RecipiendId",
                 table: "Messages",
-                column: "RecipientId");
+                column: "RecipiendId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Messages_SenderId",
                 table: "Messages",
                 column: "SenderId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_Nick",
+                table: "Users",
+                column: "Nick",
+                unique: true);
         }
 
         /// <inheritdoc />
