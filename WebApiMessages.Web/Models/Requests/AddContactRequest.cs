@@ -2,7 +2,7 @@
 {
     public class AddContactRequest
     {
-        public Guid RecipientId { get; set; }
+        public Guid RecipiendId { get; set; }
         public string NameContact { get; set; }
     }
 }

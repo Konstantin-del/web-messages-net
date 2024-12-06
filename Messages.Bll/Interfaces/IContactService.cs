@@ -7,5 +7,9 @@ public interface IContactService
 {
     Task<ContactDto> AddContactAsync(ContactDto contact);
 
-    Task<List<ContactEntity>> GetContactByIdOwnerAsync(Guid idOwner);
+    Task<List<ContactDto>> GetContactByIdOwnerAsync(Guid idOwner);
+
+    Task DeleteContactAsync(Guid idOwner, Guid idRecipient);
+
+    Task<ContactDto> UpdateContactAsync(ContactDto contact);
 }

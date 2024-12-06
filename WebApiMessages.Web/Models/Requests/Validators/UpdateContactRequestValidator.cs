@@ -6,6 +6,7 @@ namespace Messages.Web.Models.Requests.Validators
     {
         public UpdateContactRequestValidator() 
         {
+            RuleFor(x => x.RecipiendId).NotEmpty(); 
             RuleFor(x => x.NameContact).Length(1, 20);
         }
     }

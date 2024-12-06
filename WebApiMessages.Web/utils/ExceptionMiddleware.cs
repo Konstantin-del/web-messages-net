@@ -18,7 +18,7 @@ public class ExceptionMiddleware
         }
         catch (UserAlreadyExistsException ex)
         {
-            await UserAlreadyExistsExceptionAsync(httpContext, ex);
+            await HandleItemAlreadyExistsExceptionAsync(httpContext, ex);
         }
         catch (EntityNotFoundException ex)
         {
@@ -26,7 +26,7 @@ public class ExceptionMiddleware
         }
         catch (FailedToCreateException ex)
         {
-            await FailedToCreateExceptionAsync(httpContext, ex);
+            await HandleFailedToCreateExceptionAsync(httpContext, ex);
         }
         catch (Exception ex)
         {
@@ -55,10 +55,10 @@ public class ExceptionMiddleware
             Message = exception.Message
         }.ToString());
     }
-    private async Task FailedToCreateExceptionAsync(HttpContext context, Exception exception)
+    private async Task HandleFailedToCreateExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
-        context.Response.StatusCode = StatusCodes.Status507InsufficientStorage;
+        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
         await context.Response.WriteAsync(new ErrorDetails()
         {
             StatusCode = context.Response.StatusCode,
@@ -66,7 +66,7 @@ public class ExceptionMiddleware
         }.ToString());
     }
 
-    private async Task UserAlreadyExistsExceptionAsync(HttpContext context, Exception exception)
+    private async Task HandleItemAlreadyExistsExceptionAsync(HttpContext context, Exception exception)
     {
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = StatusCodes.Status400BadRequest;

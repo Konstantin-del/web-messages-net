@@ -24,7 +24,7 @@ public class Context : DbContext
             .IsRequired()
             .HasMaxLength(20);
         modelBuilder.Entity<ContactEntity>()
-            .HasKey(s => new { s.OwnerId, s.RecipientId });
+            .HasKey(s => new { s.OwnerId, s.RecipiendId });
         modelBuilder.Entity<MessageEntity>()
             .Property(s => s.Message)
             .IsRequired();

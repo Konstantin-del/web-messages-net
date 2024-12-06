@@ -27,7 +27,7 @@ namespace Messages.Dal.Migrations
                     b.Property<Guid>("OwnerId")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid>("RecipientId")
+                    b.Property<Guid>("RecipiendId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("NameContact")
@@ -35,7 +35,7 @@ namespace Messages.Dal.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("character varying(20)");
 
-                    b.HasKey("OwnerId", "RecipientId");
+                    b.HasKey("OwnerId", "RecipiendId");
 
                     b.ToTable("Contacts");
                 });
@@ -57,10 +57,10 @@ namespace Messages.Dal.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<Guid>("RecipientId")
+                    b.Property<Guid>("RecipiendId")
                         .HasColumnType("uuid");
 
-                    b.Property<DateTime>("SendDate")
+                    b.Property<DateTimeOffset>("SendDate")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("SenderId")
@@ -68,7 +68,7 @@ namespace Messages.Dal.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("RecipientId");
+                    b.HasIndex("RecipiendId");
 
                     b.HasIndex("SenderId");
 
@@ -105,13 +105,16 @@ namespace Messages.Dal.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Nick")
+                        .IsUnique();
+
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("Messages.Dal.Entityes.ContactEntity", b =>
                 {
                     b.HasOne("Messages.Dal.Entityes.UserEntity", "Owner")
-                        .WithMany("Contacts")
+                        .WithMany()
                         .HasForeignKey("OwnerId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -121,9 +124,9 @@ namespace Messages.Dal.Migrations
 
             modelBuilder.Entity("Messages.Dal.Entityes.MessageEntity", b =>
                 {
-                    b.HasOne("Messages.Dal.Entityes.UserEntity", "Recipient")
+                    b.HasOne("Messages.Dal.Entityes.UserEntity", "Recipiend")
                         .WithMany()
-                        .HasForeignKey("RecipientId")
+                        .HasForeignKey("RecipiendId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -133,14 +136,9 @@ namespace Messages.Dal.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Recipient");
+                    b.Navigation("Recipiend");
 
                     b.Navigation("Sender");
-                });
-
-            modelBuilder.Entity("Messages.Dal.Entityes.UserEntity", b =>
-                {
-                    b.Navigation("Contacts");
                 });
 #pragma warning restore 612, 618
         }

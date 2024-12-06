@@ -20,7 +20,7 @@ public class UserController(IUserService userService,IMapper mapper) : Controlle
         var result = mapper.Map<RegisterDto>(modelRegister);
         var user = await userService.CreateUserAsync(result);
         var newUser = mapper.Map<UserResponse>(user);
-        newUser.Token = JWT.GetToken(newUser.Id.ToString());
+        newUser.Token = JWT.GetToken(user.Id.ToString());
         return Ok(newUser);
     }
 
@@ -42,7 +42,7 @@ public class UserController(IUserService userService,IMapper mapper) : Controlle
     }
 
     [HttpPatch(), Authorize]
-    public async Task<ActionResult<UpdateUserResponse>> Edit([FromBody] UpdateUserRequest modelUpdate)
+    public async Task<ActionResult<UpdateUserResponse>> EditUser([FromBody] UpdateUserRequest modelUpdate)
     {
         string accessToken = Request.Headers[HeaderNames.Authorization];
         accessToken = accessToken.Remove(0,7);
@@ -54,7 +54,7 @@ public class UserController(IUserService userService,IMapper mapper) : Controlle
     }
 
     [HttpDelete(), Authorize]
-    public async Task<ActionResult> Delete()
+    public async Task<ActionResult> DeleteUser()
     {
         string accessToken = Request.Headers[HeaderNames.Authorization];
         accessToken = accessToken.Remove(0, 7);

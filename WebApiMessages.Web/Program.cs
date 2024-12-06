@@ -33,12 +33,15 @@ public class Program()
         
         builder.Services.AddScoped<IUserService, UserService>();
         builder.Services.AddScoped<IContactService, ContactService>();
+        builder.Services.AddScoped<IMessageService, MessageService>();
         builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
 
         builder.Services.AddScoped<IUserRepository, UserRepository>();
-        builder.Services.AddScoped<IContactRepository, ContactRepository>();   
+        builder.Services.AddScoped<IContactRepository, ContactRepository>();
+        builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
         builder.Services.AddAutoMapper(
+            typeof(MessageMapperProfileBll),
             typeof(UserMapperProfile),
             typeof(UserMapperProfileBll),
             typeof(ContactMapperProfileBll)
@@ -70,7 +73,7 @@ public class Program()
         app.UseAuthentication();
         app.UseAuthorization();
 
-        app.UseMiddleware<ExceptionMiddleware>();
+        //app.UseMiddleware<ExceptionMiddleware>();
 
         app.MapControllers();
 

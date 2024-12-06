@@ -9,5 +9,9 @@ namespace Messages.Dal.Interfaces
         Task<bool> IsContactByIdAsync(Guid idOvner, Guid idRecipient);
 
         Task<List<ContactEntity>> GetContactByIdOwnerAsync(Guid idOwner);
+
+        Task DeleteContactAsync(Guid idOwner, Guid idRecipient);
+
+        Task<ContactEntity> UpdateContactAsync(ContactEntity contact);
     }
 }

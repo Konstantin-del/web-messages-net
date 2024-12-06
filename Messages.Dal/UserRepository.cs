@@ -10,6 +10,7 @@ public class UserRepository(Context context) : IUserRepository
     {
         context.Database.EnsureCreated();
     }
+
     public async Task<UserEntity> AuthenticateUserAsync(string nick)
     {
        return await context.Users.FirstOrDefaultAsync(s => s.Nick == nick);
