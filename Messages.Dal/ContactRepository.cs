@@ -1,6 +1,7 @@
 ﻿using Messages.Dal.Entityes;
 using Messages.Dal.Interfaces;
 using Microsoft.EntityFrameworkCore;
+
 namespace Messages.Dal;
 
 public class ContactRepository(Context context) : IContactRepository
@@ -41,7 +42,8 @@ public class ContactRepository(Context context) : IContactRepository
 
     public async Task DeleteContactAsync(Guid idOwner, Guid idRecipient)
     {
-        await context.Contacts.Where(n => n.OwnerId == idOwner && n.RecipiendId == idRecipient).ExecuteDeleteAsync();
-        await context.SaveChangesAsync();
+        await context.Contacts.Where(n => 
+            n.OwnerId == idOwner && n.RecipiendId == idRecipient
+        ).ExecuteDeleteAsync();
     }
 }

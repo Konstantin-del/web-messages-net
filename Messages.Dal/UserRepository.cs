@@ -5,23 +5,17 @@ using Microsoft.EntityFrameworkCore;
 namespace Messages.Dal;
 
 public class UserRepository(Context context) : IUserRepository
-{
-    public void CreateDB()
-    {
-        context.Database.EnsureCreated();
-    }
-
+{ 
     public async Task<UserEntity> AuthenticateUserAsync(string nick)
     {
        return await context.Users.FirstOrDefaultAsync(s => s.Nick == nick);
     }
 
-    public async Task<UserEntity> CreateUserAsync(UserEntity user)
+    public async Task<string> CreateUserAsync(UserEntity user)
     {
         await context.Users.AddAsync(user);
         await context.SaveChangesAsync();
-        var result = await context.Users.FirstOrDefaultAsync(n => n.Nick == user.Nick);
-        return result;
+        return user.Nick;
     }
 
     public async Task<UserEntity> GetUserByIdAsync(Guid id)
@@ -45,6 +39,5 @@ public class UserRepository(Context context) : IUserRepository
     public async Task DeleteUserAsync(Guid id)
     {
         await context.Users.Where(n => n.Id == id).ExecuteDeleteAsync();
-        await context.SaveChangesAsync();
     }
 }

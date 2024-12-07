@@ -25,13 +25,33 @@ namespace Messages.Bll
             return id;
         }
 
-        public async Task<List<MessageDto>> GetAllMessageFromContact(Guid SenderId, Guid RecipiendId)
+        public async Task<List<MessageDto>> GetAllMessageFromContactAsync(Guid senderId, Guid recipiendId)
         {
-            var messages = await messageRepository.GetAllMessageFromContact(SenderId, RecipiendId);
+            var messages = await messageRepository.GetAllMessageFromContactAsync(senderId, recipiendId);
             if(messages is null)
                 throw new EntityNotFoundException("messages not found");
             var result = mapper.Map<List<MessageDto>>(messages);
+
+            await messageRepository.UpdateIsDeliveredToTrue(senderId);
             return result;
+        }
+
+        public async Task<List<MessageDto>> GetAllUndeliveredMessagesAsync(Guid recipiendId)
+        {
+            var messages = await messageRepository.GetAllUndeliveredMessagesAsync(recipiendId);
+            if (messages is null)
+                throw new EntityNotFoundException("messages not found");
+            var result = mapper.Map<List<MessageDto>>(messages);
+            await messageRepository.UpdateIsDeliveredToTrue(recipiendId);
+            return result;
+        }
+
+        public async Task DeleteMessageAsync(Guid ownerId, int id)
+        {
+            bool isResult = messageRepository.GetMessageByOwnerIdAndIdAsync(ownerId, id).Result;
+            if (!isResult)
+                throw new EntityNotFoundException("messages not found");
+            await messageRepository.DeleteMessageAsync(ownerId, id);
         }
     }
 }
