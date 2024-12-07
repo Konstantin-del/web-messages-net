@@ -27,28 +27,38 @@ public class MessagesController(IMapper mapper, IMessageService messageService) 
     }
 
     [HttpGet("{id}/all")]
-    public async Task<ActionResult<List<GetMessagesResponse>>> GetAllMessageFromContact([FromRoute] Guid id)
+    public async Task<ActionResult<List<GetMessagesResponse>>> GetAllMessageFromContact(
+        [FromRoute] Guid id)
     {
         string accessToken = Request.Headers[HeaderNames.Authorization];
         accessToken = accessToken.Remove(0, 7);
-        var IdSender = JWT.DecodeJwtAndReturnId(accessToken);
-        var SenderId = IdSender;
-        var messages = await messageService.GetAllMessageFromContact(SenderId, id);
+        var idRecipiend = JWT.DecodeJwtAndReturnId(accessToken);
+        var recipiendId = idRecipiend;
+        var messages = await messageService.GetAllMessageFromContactAsync(recipiendId, id);
         var result = mapper.Map <List<GetMessagesResponse>>(messages);
         return Ok(result);
     }
 
-    //[HttpGet("{id}")]
-    //public ActionResult<GetMessagesResponse> GetMessages([FromRoute] Guid id)
-    //{
-    //    GetMessagesResponse Messages = new();
-    //    return Ok(Messages); 
-    //}
+    [HttpGet("unread")]
+    public async Task<ActionResult<List<GetMessagesResponse>>> GetAllUndeliveredMessages()
+    {
+        string accessToken = Request.Headers[HeaderNames.Authorization];
+        accessToken = accessToken.Remove(0, 7);
+        var idRecipiend = JWT.DecodeJwtAndReturnId(accessToken);
+        var messages = await messageService.GetAllUndeliveredMessagesAsync(idRecipiend);
+        var result = mapper.Map<List<GetMessagesResponse>>(messages);
+        return Ok(result);
+    }
 
-    //[HttpDelete("{id}")]
-    //public ActionResult Delete(int id)
-    //{
-    //    return NoContent();
-    //}
+    [HttpDelete]
+    public async Task<ActionResult> DeleteMessage([FromBody] DeleteMessageRequest id)
+    {
+        string accessToken = Request.Headers[HeaderNames.Authorization];
+        accessToken = accessToken.Remove(0, 7);
+        var idOwner = JWT.DecodeJwtAndReturnId(accessToken);
+        int messageId = id.Id;
+        await messageService.DeleteMessageAsync(idOwner, messageId);
+        return NoContent();
+    }
 }
 

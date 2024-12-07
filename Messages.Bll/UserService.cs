@@ -25,7 +25,6 @@ public class UserService(
 
     public async Task<UserDto> CreateUserAsync(RegisterDto user)
     {
-        userRepository.CreateDB();
         var entity = await userRepository.GetUserByNickAsync(user.Nick);
         if (entity != null)
             throw new UserAlreadyExistsException("this nick already exists");
@@ -33,7 +32,8 @@ public class UserService(
         result.Password =  passwordHelper.HashPasword(result.Password, out var salt);
         result.Salt = salt;
         result.RegistrationDate = DateTimeOffset.UtcNow;
-        var newUser = await userRepository.CreateUserAsync(result);
+        var nick= await userRepository.CreateUserAsync(result);
+        var newUser = await userRepository.GetUserByNickAsync(nick);
         if (newUser is null)
             throw new FailedToCreateException("failed to create user");
         var readyUser = mapper.Map<UserDto>(newUser);

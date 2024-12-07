@@ -7,5 +7,13 @@ public interface IMessageRepository
 {
     Task<int> AddMessageAsync(MessageEntity message);
 
-    Task<List<MessageEntity>> GetAllMessageFromContact(Guid OwnerId, Guid Recipiend);
+    Task<List<MessageEntity>> GetAllMessageFromContactAsync(Guid recipiend, Guid senderId);
+
+    Task UpdateIsDeliveredToTrue(Guid recipiendId);
+
+    Task<List<MessageEntity>> GetAllUndeliveredMessagesAsync(Guid recipiendId);
+
+    Task DeleteMessageAsync(Guid ownerId, int id);
+
+    Task<bool> GetMessageByOwnerIdAndIdAsync(Guid ownerId, int id);
 }

@@ -7,7 +7,7 @@ public interface IUserRepository
 {
     Task<UserEntity> AuthenticateUserAsync(string nick);
 
-    Task<UserEntity> CreateUserAsync(UserEntity user);
+    Task <string> CreateUserAsync(UserEntity user);
 
     Task<UserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName);
 
@@ -16,5 +16,4 @@ public interface IUserRepository
     Task<UserEntity> GetUserByIdAsync(Guid id);
 
     Task<UserEntity> GetUserByNickAsync(string nick);
-    void CreateDB();
 }

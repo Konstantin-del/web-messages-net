@@ -73,7 +73,7 @@ public class Program()
         app.UseAuthentication();
         app.UseAuthorization();
 
-        //app.UseMiddleware<ExceptionMiddleware>();
+        app.UseMiddleware<ExceptionMiddleware>();
 
         app.MapControllers();
 
