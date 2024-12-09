@@ -7,7 +7,7 @@ public interface IUserRepository
 {
     Task<UserEntity> AuthenticateUserAsync(string nick);
 
-    Task <string> CreateUserAsync(UserEntity user);
+    Task <UserEntity> CreateUserAsync(UserEntity user);
 
     Task<UserEntity> UpdateUserAsync(Guid id, UpdateUserEntity userName);
 

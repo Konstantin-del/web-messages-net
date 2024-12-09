@@ -11,11 +11,11 @@ public class UserRepository(Context context) : IUserRepository
        return await context.Users.FirstOrDefaultAsync(s => s.Nick == nick);
     }
 
-    public async Task<string> CreateUserAsync(UserEntity user)
+    public async Task<UserEntity> CreateUserAsync(UserEntity user)
     {
         await context.Users.AddAsync(user);
         await context.SaveChangesAsync();
-        return user.Nick;
+        return user;
     }
 
     public async Task<UserEntity> GetUserByIdAsync(Guid id)
