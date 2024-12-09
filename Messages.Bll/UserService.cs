@@ -29,11 +29,10 @@ public class UserService(
         if (entity != null)
             throw new UserAlreadyExistsException("this nick already exists");
         var result = mapper.Map<UserEntity>(user);
-        result.Password =  passwordHelper.HashPasword(result.Password, out var salt);
+        result.Password = passwordHelper.HashPasword(result.Password, out var salt);
         result.Salt = salt;
         result.RegistrationDate = DateTimeOffset.UtcNow;
-        var nick= await userRepository.CreateUserAsync(result);
-        var newUser = await userRepository.GetUserByNickAsync(nick);
+        var newUser = await userRepository.CreateUserAsync(result);
         if (newUser is null)
             throw new FailedToCreateException("failed to create user");
         var readyUser = mapper.Map<UserDto>(newUser);
@@ -44,7 +43,7 @@ public class UserService(
     {
         var user = await userRepository.GetUserByIdAsync(id);
         if (user is null)
-            throw new FailedToCreateException("failed to update user");
+            throw new EntityNotFoundException("user not found");
         var newItem = mapper.Map<UpdateUserEntity>(item);
         var result = await userRepository.UpdateUserAsync(id, newItem);
         if (result is null)
