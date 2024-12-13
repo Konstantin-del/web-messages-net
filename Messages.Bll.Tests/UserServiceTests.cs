@@ -6,9 +6,6 @@ using Messages.Bll.Interfaces;
 using Messages.Bll.Exceptions;
 using Messages.Bll.ModelsBll;
 using Messages.Bll.Mappings;
-using Messages.Dal;
-using System;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
 
 namespace Messages.Bll.Tests;
 
@@ -56,7 +53,7 @@ public class UserServiceTests
         _passwordHelperMock.Setup(t => t.VerifyPassword(
             authenticateDto.Password, userEntity.Password, userEntity.Salt)).Returns(true);
         // Act
-        _mapper.Map<UserDto>(userEntity);
+        //_mapper.Map<UserDto>(userEntity);
         var result = await _sut.AuthenticateUserAsync(authenticateDto);
         // Assert
         Assert.Equal("nick", result.Nick);
@@ -175,12 +172,4 @@ public class UserServiceTests
         // Assert
         _userRepositoryMock.Verify(t => t.GetUserByIdAsync(guid), Times.Once);
     }
-
-    //public async Task DeleteUserAsync(Guid id)
-    //{
-    //    var user = await userRepository.GetUserByIdAsync(id);
-    //    if (user is null)
-    //        throw new EntityNotFoundException("user not found");
-    //    await userRepository.DeleteUserAsync(id);
-    //}
 }

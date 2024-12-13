@@ -15,7 +15,8 @@ namespace Messages.Web.Controllers;
 public class ContactsController(IMapper mapper, IContactService contactService) : Controller
 {
     [HttpPost()]
-    public async Task<ActionResult<AddContactRespons>> AddContactAsync( [FromBody] AddContactRequest contact)
+    public async Task<ActionResult<AddContactRespons>> AddContactAsync(
+        [FromBody] AddContactRequest contact)
     {
         string accessToken = Request.Headers[HeaderNames.Authorization];
         accessToken = accessToken.Remove(0, 7);
@@ -38,8 +39,17 @@ public class ContactsController(IMapper mapper, IContactService contactService) 
         return result;
     }
 
+    [HttpGet("{name}")]
+    public async Task<ActionResult<Guid>> GetContact([FromRoute] string name)
+    {
+        var nick = name;
+        var item = await contactService.GetContactByNickAsync(nick);
+        return item;
+    }
+
     [HttpPatch]
-    public async Task<ActionResult<UpdateContactResponse>> EditContact([FromBody] UpdateContactRequest updateContact)
+    public async Task<ActionResult<UpdateContactResponse>> EditContact(
+        [FromBody] UpdateContactRequest updateContact)
     {
         string accessToken = Request.Headers[HeaderNames.Authorization];
         accessToken = accessToken.Remove(0, 7);

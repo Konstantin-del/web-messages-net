@@ -9,6 +9,8 @@ public interface IContactService
 
     Task<List<ContactDto>> GetContactByIdOwnerAsync(Guid idOwner);
 
+    Task<Guid> GetContactByNickAsync(string nick);
+
     Task DeleteContactAsync(Guid idOwner, Guid idRecipient);
 
     Task<ContactDto> UpdateContactAsync(ContactDto contact);
