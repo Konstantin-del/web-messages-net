@@ -36,6 +36,14 @@ public class ContactService(
         return contacts;
     }
 
+    public async Task<Guid> GetContactByNickAsync(string nick)
+    {
+        var result = await userRepository.GetUserByNickAsync(nick);
+        if(result is null)
+            throw new EntityNotFoundException("contacts does not found");
+        return result.Id;
+    }
+
     public async Task<ContactDto> UpdateContactAsync(ContactDto updateContact)
     {
         bool isExists = contactRepository.IsContactByIdAsync(updateContact.OwnerId, updateContact.RecipiendId).Result;

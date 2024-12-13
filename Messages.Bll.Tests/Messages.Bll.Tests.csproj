@@ -20,6 +20,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Messages.Bll\Messages.Bll.csproj" />
     <ProjectReference Include="..\Messages.Dal\Messages.Dal.csproj" />
+    <ProjectReference Include="..\WebApiMessages.Web\Messages.Web.csproj" />
   </ItemGroup>
 
   <ItemGroup>

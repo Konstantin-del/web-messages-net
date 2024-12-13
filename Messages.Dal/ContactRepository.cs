@@ -14,19 +14,17 @@ public class ContactRepository(Context context) : IContactRepository
         return true;
     }
 
-    public async Task<ContactEntity> AddContactAsync(ContactEntity contact)
+    public async Task<ContactEntity?> AddContactAsync(ContactEntity contact)
     {
         await context.Contacts.AddAsync(contact);
         await context.SaveChangesAsync();
-        var result = await context.Contacts.FirstOrDefaultAsync(
+        return await context.Contacts.FirstOrDefaultAsync(
             n => n.OwnerId == contact.OwnerId && n.RecipiendId == contact.RecipiendId);
-        return result;
     }
 
     public async Task<List<ContactEntity>> GetContactByIdOwnerAsync(Guid idOwner)
     {
-        var contacts = await context.Contacts.Where(i => i.OwnerId == idOwner).ToListAsync();
-        return contacts;
+        return await context.Contacts.Where(i => i.OwnerId == idOwner).ToListAsync();
     }
 
     public async Task<ContactEntity> UpdateContactAsync(ContactEntity updateContact)
@@ -35,9 +33,9 @@ public class ContactRepository(Context context) : IContactRepository
            n => n.OwnerId == updateContact.OwnerId && n.RecipiendId == updateContact.RecipiendId);
         contact.NameContact = updateContact.NameContact;
         await context.SaveChangesAsync();
-        var newContact = await context.Contacts.FirstOrDefaultAsync(
+        return await context.Contacts.FirstOrDefaultAsync(
            n => n.OwnerId == contact.OwnerId && n.RecipiendId == contact.RecipiendId);
-        return newContact;
+        
     }
 
     public async Task DeleteContactAsync(Guid idOwner, Guid idRecipient)

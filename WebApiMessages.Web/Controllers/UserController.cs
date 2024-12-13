@@ -15,7 +15,8 @@ namespace Messages.Web.Controllers;
 public class UserController(IUserService userService,IMapper mapper) : Controller
 { 
     [HttpPost]
-    public async Task<ActionResult<UserResponse>> CreateUserAsync([FromBody] RegistrationUserRequest modelRegister)
+    public async Task<ActionResult<UserResponse>> CreateUserAsync(
+        [FromBody] RegistrationUserRequest modelRegister)
     {
         var result = mapper.Map<RegisterDto>(modelRegister);
         var user = await userService.CreateUserAsync(result);
@@ -29,16 +30,9 @@ public class UserController(IUserService userService,IMapper mapper) : Controlle
     {
         var result = mapper.Map<AuthenticateDto>(authData);
         var user = await userService.AuthenticateUserAsync(result);
-        try
-        {
-            var verifiedUser = mapper.Map<UserResponse>(user);
-            verifiedUser.Token = JWT.GetToken(user.Id.ToString());
-            return Ok(verifiedUser);
-        }
-        catch 
-        {
-            return Unauthorized();
-        }
+        var verifiedUser = mapper.Map<UserResponse>(user);
+        verifiedUser.Token = JWT.GetToken(user.Id.ToString());
+        return Ok(verifiedUser);
     }
 
     [HttpPatch(), Authorize]
