@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Messages.Web.Models;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -23,7 +24,7 @@ public static class JWT
                 ValidateLifetime = true,
                 ValidateIssuerSigningKey = true,
                 ValidIssuer = "https://localhost:7166",
-                ValidAudience = "https://localhost:7166",
+                ValidAudience = "https://localhost:5173",
                 IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SUPER-message-superSecretKey@345"))
             };
         });
@@ -31,12 +32,17 @@ public static class JWT
 
     internal static string GetToken(string id)
     {
+        var claims = new List<Claim>
+        {
+            new Claim("id", id),
+            new Claim(ClaimTypes.Role, ((int)UserRole.User).ToString())
+        };
         var secretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SUPER-message-superSecretKey@345"));
         var signinCredentials = new SigningCredentials(secretKey, SecurityAlgorithms.HmacSha256);
         var tokeOptions = new JwtSecurityToken(
             issuer: "https://localhost:7166",
-            audience: "https://localhost:7166",
-            claims: new List<Claim>() { new Claim("id", id) },
+            audience: "https://localhost:5173",
+            claims: claims,
             expires: DateTime.Now.AddMinutes(60000),
             signingCredentials: signinCredentials
         );
