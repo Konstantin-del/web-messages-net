@@ -14,6 +14,7 @@ public class ExceptionMiddleware
     {
         try
         {
+            httpContext.Response.ContentType = "application/json";
             await _next(httpContext);
         }
         catch (UserAlreadyExistsException ex)
@@ -28,52 +29,56 @@ public class ExceptionMiddleware
         {
             await HandleFailedToCreateExceptionAsync(httpContext, ex);
         }
+        catch (UnavailableServiceException ex)
+        {
+            await HandleUnavailableServiceExceptionAsync(httpContext, ex);
+        }
         catch (Exception ex)
         {
             await HandleExceptionAsync(httpContext, ex);
         }
 
     }
-    private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+    private async Task HandleExceptionAsync(HttpContext httpContext, Exception exception)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-        await context.Response.WriteAsync(new ErrorDetails()
+        httpContext.Response.ContentType = "application/json";
+        httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        await httpContext.Response.WriteAsync(new ErrorDetails()
         {
-            StatusCode = context.Response.StatusCode,
+            StatusCode = httpContext.Response.StatusCode,
             Message = "Internal Server Error from the custom middleware."
         }.ToString());
     }
 
-    private async Task HandleEntityNotFoundExceptionAsync(HttpContext context, Exception exception)
+    private async Task HandleEntityNotFoundExceptionAsync(HttpContext httpContext, Exception exception)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = StatusCodes.Status404NotFound;
-        await context.Response.WriteAsync(new ErrorDetails()
-        {
-            StatusCode = context.Response.StatusCode,
-            Message = exception.Message
-        }.ToString());
+        httpContext.Response.StatusCode = StatusCodes.Status404NotFound;
+        await WriteErrorAsync(httpContext, exception.Message);
     }
-    private async Task HandleFailedToCreateExceptionAsync(HttpContext context, Exception exception)
+    private async Task HandleFailedToCreateExceptionAsync(HttpContext httpContext, Exception exception)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = StatusCodes.Status500InternalServerError;
-        await context.Response.WriteAsync(new ErrorDetails()
-        {
-            StatusCode = context.Response.StatusCode,
-            Message = exception.Message
-        }.ToString());
+        httpContext.Response.StatusCode = StatusCodes.Status500InternalServerError;
+        await WriteErrorAsync(httpContext, exception.Message);
     }
 
-    private async Task HandleItemAlreadyExistsExceptionAsync(HttpContext context, Exception exception)
+    private async Task HandleItemAlreadyExistsExceptionAsync(HttpContext httpContext, Exception exception)
+    { 
+        httpContext.Response.StatusCode = StatusCodes.Status400BadRequest;
+        await WriteErrorAsync(httpContext, exception.Message);
+    }
+
+    private async Task HandleUnavailableServiceExceptionAsync(HttpContext httpContext, Exception exception)
     {
-        context.Response.ContentType = "application/json";
-        context.Response.StatusCode = StatusCodes.Status400BadRequest;
-        await context.Response.WriteAsync(new ErrorDetails()
+        httpContext.Response.StatusCode = StatusCodes.Status502BadGateway;
+        await WriteErrorAsync(httpContext, exception.Message);
+    }
+
+    private async Task WriteErrorAsync(HttpContext httpContext, string message)
+    {
+        await httpContext.Response.WriteAsync(new ErrorDetails()
         {
-            StatusCode = context.Response.StatusCode,
-            Message = exception.Message
+            StatusCode = httpContext.Response.StatusCode,
+            Message = message
         }.ToString());
     }
 }

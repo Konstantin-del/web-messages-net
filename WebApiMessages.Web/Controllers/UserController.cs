@@ -7,6 +7,8 @@ using AutoMapper;
 using Messages.Bll.Interfaces;
 using Messages.Web.Utils;
 using Microsoft.Net.Http.Headers;
+using Messages.Web.utils;
+using Messages.Web.Models;
 
 namespace Messages.Web.Controllers;
 
@@ -35,7 +37,8 @@ public class UserController(IUserService userService,IMapper mapper) : Controlle
         return Ok(verifiedUser);
     }
 
-    [HttpPatch(), Authorize]
+    [HttpPatch]
+    [CastomAuthorize([UserRole.User])]
     public async Task<ActionResult<UpdateUserResponse>> EditUser([FromBody] UpdateUserRequest modelUpdate)
     {
         string accessToken = Request.Headers[HeaderNames.Authorization];

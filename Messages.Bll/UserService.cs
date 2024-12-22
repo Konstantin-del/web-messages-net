@@ -12,10 +12,9 @@ public class UserService(
     IMapper mapper,
     IPasswordHelper passwordHelper
 ) : IUserService
-
-{
+{ 
     public async Task<UserDto> AuthenticateUserAsync(AuthenticateDto dataAuth)
-    {     
+    {
         var user = await userRepository.AuthenticateUserAsync(dataAuth.Nick);
         if (user != null && passwordHelper.VerifyPassword(dataAuth.Password, user.Password, user.Salt))
             return mapper.Map<UserDto>(user);
@@ -50,7 +49,7 @@ public class UserService(
             throw new FailedToCreateException("failed to update user");
         UpdateUserDto updateItem = new();
         updateItem.Name = result.Name;
-        return updateItem;  
+        return updateItem;
     }
 
     public async Task DeleteUserAsync(Guid id)

@@ -2,13 +2,13 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Messages.Bll.Interfaces;
 using Messages.Bll;
+using Messages.Bll.Mappings;
 using Messages.Web.Models.Requests.Validators;
 using Messages.Dal.Interfaces;
 using Messages.Dal;
 using Messages.Web.Utils;
 using Microsoft.EntityFrameworkCore;
 using Messages.Web.Mappings;
-using Messages.Bll.Mappings;
 
 namespace Messages.Web;
 
@@ -36,24 +36,34 @@ public class Program()
         builder.Services.AddScoped<IMessageService, MessageService>();
         builder.Services.AddScoped<IPasswordHelper, PasswordHelper>();
 
+        builder.Services.AddScoped<IRedirectUserRequestService, RedirectUserRequestService>();
         builder.Services.AddScoped<IUserRepository, UserRepository>();
         builder.Services.AddScoped<IContactRepository, ContactRepository>();
         builder.Services.AddScoped<IMessageRepository, MessageRepository>();
 
         builder.Services.AddAutoMapper(
-            typeof(MessageMapperProfileBll),
+            //typeof(MessageMapperProfileBll),
             typeof(UserMapperProfile),
-            typeof(UserMapperProfileBll),
-            typeof(ContactMapperProfileBll)
+            typeof(UserMapperProfileBll)
+            //typeof(ContactMapperProfileBll)
         );
-        // Add services to the container.
+
+        const string policyName = "CorsPolicy";
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy(name: policyName, builder =>
+            {
+                builder.AllowAnyOrigin()
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
+            });
+        });
 
         builder.Services.AddControllers();
 
         builder.Services.AddFluentValidationAutoValidation();
         builder.Services.AddValidatorsFromAssemblyContaining<RegistrationUserRequestValidator>();
 
-        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
 
@@ -69,6 +79,8 @@ public class Program()
         app.UseHttpsRedirection();
 
         app.UseHttpsRedirection();
+
+        app.UseCors(policyName);
 
         app.UseAuthentication();
         app.UseAuthorization();
