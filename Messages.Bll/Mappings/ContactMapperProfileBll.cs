@@ -9,5 +9,6 @@ public class ContactMapperProfileBll : Profile
     public ContactMapperProfileBll()
     {
         CreateMap<ContactEntity, ContactDto>().ReverseMap();
+        CreateMap<UserEntity, InfoForConnectDto>().ReverseMap();
     }
 }

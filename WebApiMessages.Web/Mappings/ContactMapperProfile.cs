@@ -13,5 +13,6 @@ public class ContactMapperProfile : Profile
         CreateMap<ContactDto, GetContactsUserResponse>().ReverseMap();
         CreateMap<ContactDto, UpdateContactResponse>();
         CreateMap<UpdateContactRequest, ContactDto>();
+        CreateMap<InfoForConnectDto, InfoForContactResponse>();
     }
 }

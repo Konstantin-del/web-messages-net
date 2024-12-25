@@ -1,9 +1,8 @@
 ﻿namespace Messages.Web.Models.Responses
 {
-    public class UserDataResponse
+    public class InfoForContactResponse
     {
         public Guid Id { get; set; }
-        public string Name { get; set; }
         public string Nick { get; set; }
     }
 }

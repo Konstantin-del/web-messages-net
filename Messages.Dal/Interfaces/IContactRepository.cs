@@ -13,5 +13,7 @@ namespace Messages.Dal.Interfaces
         Task DeleteContactAsync(Guid idOwner, Guid idRecipient);
 
         Task<ContactEntity> UpdateContactAsync(ContactEntity contact);
+
+        Task<List<UserEntity>> GetListUserByNickAsync(string nick);
     }
 }
