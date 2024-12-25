@@ -39,12 +39,15 @@ public class ContactsController(IMapper mapper, IContactService contactService) 
         return result;
     }
 
-    [HttpGet("{name}")]
-    public async Task<ActionResult<Guid>> GetContact([FromRoute] string name)
+    [HttpGet("nick/{nick}")]
+    public async Task<ActionResult<List<InfoForContactResponse>>> GetContact([FromRoute] string nick)
     {
-        var nick = name;
-        var item = await contactService.GetContactByNickAsync(nick);
-        return item;
+        if (String.IsNullOrEmpty(nick)) 
+        return BadRequest();
+        
+        var items = await contactService.GetContactByNickAsync(nick);
+        var result = mapper.Map<List<InfoForContactResponse>>(items);
+        return result;
     }
 
     [HttpPatch]

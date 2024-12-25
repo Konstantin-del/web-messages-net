@@ -35,13 +35,14 @@ public class ContactService(
         var contacts = mapper.Map<List<ContactDto>>(items);
         return contacts;
     }
-
-    public async Task<Guid> GetContactByNickAsync(string nick)
+     
+    public async Task<List<InfoForConnectDto>> GetContactByNickAsync(string nick)
     {
-        var result = await userRepository.GetUserByNickAsync(nick);
-        if(result is null)
+        var result = await contactRepository.GetListUserByNickAsync(nick); 
+        if (result is null)
             throw new EntityNotFoundException("contacts does not found");
-        return result.Id;
+        var contacts = mapper.Map<List<InfoForConnectDto>>(result);
+        return contacts;
     }
 
     public async Task<ContactDto> UpdateContactAsync(ContactDto updateContact)
@@ -62,6 +63,4 @@ public class ContactService(
             throw new EntityNotFoundException("contacts does not found");
         await contactRepository.DeleteContactAsync(idOwner, idRecipiend);
     }
-
-
 }

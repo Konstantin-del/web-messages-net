@@ -27,6 +27,11 @@ public class ContactRepository(Context context) : IContactRepository
         return await context.Contacts.Where(i => i.OwnerId == idOwner).ToListAsync();
     }
 
+    public async Task<List<UserEntity>> GetListUserByNickAsync(string nick)
+    {
+        return await context.Users.Where(n => n.Nick.IndexOf(nick) >= 0).ToListAsync();
+    }
+
     public async Task<ContactEntity> UpdateContactAsync(ContactEntity updateContact)
     {
         var contact = await context.Contacts.FirstOrDefaultAsync(
