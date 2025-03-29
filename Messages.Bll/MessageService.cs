@@ -39,10 +39,11 @@ namespace Messages.Bll
         public async Task<List<MessageDto>> GetAllUndeliveredMessagesAsync(Guid recipiendId)
         {
             var messages = await messageRepository.GetAllUndeliveredMessagesAsync(recipiendId);
+            
             if (messages is null)
                 throw new EntityNotFoundException("messages not found");
             var result = mapper.Map<List<MessageDto>>(messages);
-            await messageRepository.UpdateIsDeliveredToTrue(recipiendId);
+            //await messageRepository.UpdateIsDeliveredToTrue(recipiendId);
             return result;
         }
 

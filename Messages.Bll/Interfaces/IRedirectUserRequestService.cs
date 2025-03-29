@@ -5,5 +5,5 @@ namespace Messages.Bll.Interfaces;
 
 public interface IRedirectUserRequestService
 {
-    public Task<User> GetUserFromJsonPlaceholderAsync(int id);
+    public Task<User?> GetUserFromJsonPlaceholderAsync(int id);
 }

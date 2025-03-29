@@ -4,7 +4,7 @@ namespace Messages.Dal.Interfaces
 {
     public interface IContactRepository
     {
-        Task<ContactEntity> AddContactAsync(ContactEntity contact);
+        Task<ContactEntity?> AddContactAsync(ContactEntity contact);
 
         Task<bool> IsContactByIdAsync(Guid idOvner, Guid idRecipient);
 
@@ -12,7 +12,7 @@ namespace Messages.Dal.Interfaces
 
         Task DeleteContactAsync(Guid idOwner, Guid idRecipient);
 
-        Task<ContactEntity> UpdateContactAsync(ContactEntity contact);
+        Task<ContactEntity?> UpdateContactAsync(ContactEntity contact);
 
         Task<List<UserEntity>> GetListUserByNickAsync(string nick);
     }

@@ -14,10 +14,9 @@ public class ContactService(
 {
     public async Task<ContactDto> AddContactAsync(ContactDto contact)
     {
-        Console.WriteLine(contact.RecipiendId);
-        bool isExists = contactRepository.IsContactByIdAsync(contact.OwnerId, contact.RecipiendId).Result;
-        if (isExists)
-            throw new UserAlreadyExistsException("this contact already exists");
+       // bool isExists = contactRepository.IsContactByIdAsync(contact.OwnerId, contact.RecipiendId).Result;
+       // if (isExists)
+       //     throw new UserAlreadyExistsException("this contact already exists");
         var result = mapper.Map<ContactEntity>(contact);
         result.Owner = await userRepository.GetUserByIdAsync(contact.OwnerId);
         var newContact = await contactRepository.AddContactAsync(result);

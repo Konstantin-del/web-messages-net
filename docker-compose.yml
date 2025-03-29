@@ -1,0 +1,28 @@
+# Use postgres/example user/password credentials
+version: '3.9'
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: fred
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:5001
+
+  accountownerapp:
+    depends_on:
+      - db
+    image: web-api-messages
+    build: 
+    context: .
+    ports:
+      - 8080:8080
+    environment:
+      DATABASE_URL: "Host=db;Port=5432;Username=postgres;Password=fred;Database=MessagesTest;"

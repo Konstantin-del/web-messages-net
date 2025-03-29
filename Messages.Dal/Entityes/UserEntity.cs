@@ -1,5 +1,6 @@
 ﻿
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Messages.Dal.Entityes
 {
@@ -20,5 +21,7 @@ namespace Messages.Dal.Entityes
         public string Password { get; set; }
         public byte[] Salt { get; set; }
         public DateTimeOffset RegistrationDate { get; set; }
+        
+        //public MessageEntity messageEntity { get; set; }
     }
 }

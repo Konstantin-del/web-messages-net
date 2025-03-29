@@ -11,7 +11,7 @@ public interface IMessageRepository
 
     Task UpdateIsDeliveredToTrue(Guid recipiendId);
 
-    Task<List<MessageEntity>> GetAllUndeliveredMessagesAsync(Guid recipiendId);
+    Task<List<MessagePlusNickEntity>> GetAllUndeliveredMessagesAsync(Guid recipiendId);
 
     Task DeleteMessageAsync(Guid ownerId, int id);
 

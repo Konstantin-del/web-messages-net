@@ -27,6 +27,15 @@ public class UserController(IUserService userService,IMapper mapper) : Controlle
         return Ok(newUser);
     }
 
+    [HttpGet("test")]
+    public  ActionResult<string> CreateAnswerAsync([FromQuery] string article)
+    {
+        if(article != null)
+        return Ok(article);
+        
+        else return Ok("lox");
+    }
+
     [HttpPost("auth")] 
     public async Task<ActionResult<UserResponse>> AuthenticateUserAsync([FromBody] AuthUserRequest authData)
     {

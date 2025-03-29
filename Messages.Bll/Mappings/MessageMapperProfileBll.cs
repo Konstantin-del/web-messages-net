@@ -10,5 +10,6 @@ public class MessageMapperProfileBll : Profile
     public MessageMapperProfileBll()
     {
         CreateMap<MessageEntity, MessageDto>().ReverseMap();
+        CreateMap<MessagePlusNickEntity, MessageDto>().ReverseMap();
     }
 }

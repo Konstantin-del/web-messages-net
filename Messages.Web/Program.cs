@@ -25,7 +25,8 @@ public class Program()
             .AddCommandLine(args)
             .AddEnvironmentVariables()
             .Build();
-        var connectionString = builder.Configuration.GetConnectionString("DBConnectionString"); 
+        var connectionString = builder.Configuration.GetConnectionString("DBConnectionString") 
+            ?? Environment.GetEnvironmentVariable( "DATABASE_URL" ); 
 
         builder.AddAuth();
 

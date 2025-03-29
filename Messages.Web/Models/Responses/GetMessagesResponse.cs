@@ -11,5 +11,7 @@ namespace Messages.Web.Models.Responses
         public DateTimeOffset SendDate { get; set; }
 
         public Guid SenderId { get; set; }
+
+        public string Nick { get; set; }
     }
 }

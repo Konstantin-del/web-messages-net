@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace Messages.Bll.integrations;
 
-internal class CommonHttpClient<T>
+internal class CommonHttpClient
 {
     private readonly HttpClient _httpClient = new HttpClient();
     private readonly JsonSerializerOptions _options;
@@ -20,7 +20,7 @@ internal class CommonHttpClient<T>
         _options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     }
 
-    public async Task<T> GetRequest(string path)
+    public async Task<T> GetRequest<T>(string path)
     {
         try
         {

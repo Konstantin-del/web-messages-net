@@ -14,13 +14,13 @@ public class MessageRepository(Context context) : IMessageRepository
         return message.Id;
     }
 
-    public async Task<List<MessageEntity>> GetAllMessageFromContactAsync(Guid SenderId, Guid RecipiendId)
+    public async Task<List<MessageEntity>> GetAllMessageFromContactAsync(Guid senderId, Guid recipiendId)
     {
         return await context.Messages.Where( n =>
-           n.RecipiendId == RecipiendId && 
-           n.SenderId == SenderId ||
-           n.RecipiendId == SenderId &&
-           n.SenderId == RecipiendId
+           n.RecipiendId == recipiendId && 
+           n.SenderId == senderId ||
+           n.RecipiendId == senderId &&
+           n.SenderId == recipiendId
         ).ToListAsync();
     }
 
@@ -33,11 +33,33 @@ public class MessageRepository(Context context) : IMessageRepository
         );
     }
 
-    public async Task<List<MessageEntity>> GetAllUndeliveredMessagesAsync(Guid recipiendId)
+    public async Task<List<MessagePlusNickEntity>> GetAllUndeliveredMessagesAsync(Guid recipiendId)
     {
-        return await context.Messages.Where( n =>
-           n.RecipiendId == recipiendId && 
-           n.IsDelivered == false
+        return await context.Messages.Join(context.Users,
+            m => m.SenderId,
+            u => u.Id,
+            (m, u)=> new 
+            {
+                id = m.Id,
+                message = m.Message,
+                sendDate = m.SendDate,
+                recipiendId = m.RecipiendId,
+                senderId = m.SenderId,
+                isDelivered = m.IsDelivered,
+                nick = u.Nick
+                
+            }).Where(n =>
+            n.recipiendId == recipiendId &&
+            n.isDelivered == false
+        ).Select(m => new MessagePlusNickEntity()
+        {
+            Id = m.id,
+            Message = m.message,
+            SendDate = m.sendDate,
+            RecipiendId = m.recipiendId,
+            SenderId = m.senderId,
+            Nick = m.nick
+        }
         ).ToListAsync();
     }
 

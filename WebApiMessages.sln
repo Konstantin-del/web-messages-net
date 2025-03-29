@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.10.35027.167
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages.Web", "WebApiMessages.Web\Messages.Web.csproj", "{B15C452F-5FFE-4734-B61B-32D838A14924}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages.Web", "Messages.Web\Messages.Web.csproj", "{B15C452F-5FFE-4734-B61B-32D838A14924}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Messages.Bll", "Messages.Bll\Messages.Bll.csproj", "{B1086DFC-D9C6-4DBE-8B2A-2A9A5BBCEDDA}"
 EndProject

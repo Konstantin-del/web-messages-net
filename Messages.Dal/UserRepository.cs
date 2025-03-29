@@ -8,14 +8,14 @@ public class UserRepository(Context context) : IUserRepository
 { 
     public async Task<UserEntity> AuthenticateUserAsync(string nick)
     {
-       return await context.Users.FirstOrDefaultAsync(s => s.Nick == nick);
+        return await context.Users.FirstOrDefaultAsync(s => s.Nick == nick); 
     }
 
     public async Task<UserEntity> CreateUserAsync(UserEntity user)
     {
-        await context.Users.AddAsync(user);
+        var newuser = await context.Users.AddAsync(user);
         await context.SaveChangesAsync();
-        return user;
+        return newuser.Entity;
     }
 
     public async Task<UserEntity> GetUserByIdAsync(Guid id)
